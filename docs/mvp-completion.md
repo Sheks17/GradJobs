@@ -158,7 +158,7 @@ search/PostgreSQL were sufficient at measured scale; no external search added.
 
 ## Security review
 
-No findings in **198 publication files, 248 Git-history text objects and 26 built
+No findings in **198 publication files, 250 Git-history text objects and 26 built
 JavaScript bundles** scanned for known local secrets and credential patterns.
 This bounded scan is not proof against every possible secret format. `.env`, local
 databases/backups, credentials, deployment state, personal interview documents and
