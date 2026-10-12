@@ -29,6 +29,8 @@ See [design decisions](docs/design-decisions.md), [MVP completion and measured s
 
 ## What is included
 
+The MVP supports Greenhouse, Lever, Ashby, SmartRecruiters, USAJOBS and Workday through one normalized job model. It provides freshness and relevance filters, explainable scores, original employer application links, browser-local application tracking and named saved searches. Source health and ingestion history make partial failures visible. Current timestamped scale and verification evidence are in the [completion report](docs/mvp-completion.md).
+
 Phase 3 adds separate required/preferred experience, contextual title levels, deterministic skills, fit evidence, confidence and conflict flags, and skill/category and quick filters. The user confirmed review of all 220 Phase 3 postings: precision 100%, recall 98.7%, F1 99.4%, and four-class accuracy 99.1%. See [matching methodology](docs/matching.md) and [validation provenance and report](docs/phase3-validation.md).
 
 Phase 4A adds SmartRecruiters and the official USAJOBS API, provider configuration/capabilities, bounded concurrent ingestion, provider health, federal metadata, closing deadlines, and advanced provider filtering. See [provider setup](docs/providers.md) and [measured Phase 4A verification](docs/phase4a-provider-expansion.md). Matching version 3.0.0 and cutoff 50 remain frozen. The separate 100-posting provider pilot has blank labels for later independent review; prior metrics do not establish accuracy on new providers. Local evaluation datasets, review records, and database snapshots are excluded from the public repository.
@@ -39,11 +41,11 @@ See [GitHub and Vercel deployment](docs/deployment.md) for the two-service Verce
 
 - Next.js App Router, React, TypeScript, Tailwind CSS, responsive dashboard and job details.
 - FastAPI, Pydantic, SQLAlchemy 2.x, PostgreSQL JSONB, and Alembic migrations.
-- Greenhouse, Lever, Ashby, SmartRecruiters, and USAJOBS collectors with timeouts, throttling, retries, validation, savepoints, and structured logs.
+- Greenhouse, Lever, Ashby, SmartRecruiters, USAJOBS and Workday collectors with timeouts, throttling, retries, validation, savepoints and structured logs.
 - Search, role, seniority, workplace, state, company, salary, experience, score, and date filtering with stable pagination.
 - Transparent experience extraction, title-based seniority, role families, and score explanations.
-- Browser-local saved/applied/interviewing/offer/rejected/archived states. No authentication or server-side personal data in Phase 1.
-- 65 verified employer boards plus one scoped federal search source, source/provider health, safe job closure, and scheduled ingestion.
+- Browser-local saved/applied/interviewing/offer/rejected/archived states and named saved searches. No accounts or server-side personal records.
+- Verified employer registry, one scoped federal search source, source/provider health, safe job closure and scheduled ingestion. Counts come from the database rather than a hardcoded coverage claim.
 - Optional fictional demo listings remain available through an explicit filter.
 - Unit/integration tests, browser smoke tests, and a PostgreSQL CI workflow.
 
@@ -122,11 +124,11 @@ On macOS/Linux use `export DATABASE_URL=sqlite:///./gradjobs-live.db`. This is a
 
 ## Configuration
 
-See `.env.example`. `DATABASE_URL`, `APP_ENV`, `LOG_LEVEL`, `CORS_ORIGINS` (a JSON array), `COLLECTOR_USER_AGENT`, and `COLLECTOR_REQUEST_INTERVAL` are read by Python. The frontend uses `apps/web/.env.local`. Use an identifiable user agent and a contact address when operating collectors publicly. Run Python commands from the root so `.env` is loaded consistently.
+See `.env.example`. Python reads `DATABASE_URL`, `APP_ENV`, `LOG_LEVEL`, `CORS_ORIGINS` (a JSON array), collector timeouts/concurrency, source failure/cooldown settings and Workday detail-cache duration. USAJOBS requires `USAJOBS_API_KEY` and its registered `USAJOBS_USER_AGENT`; keep both in ignored local environment files or hosting/Actions secrets. The frontend uses `apps/web/.env.local` for its public API origin only. Use an identifiable user agent when operating collectors publicly. Run Python commands from the root so `.env` is loaded consistently.
 
 ## Database and migrations
 
-`job_sources` stores each provider/board identity, employer, enablement, timestamps, and latest sync error. `jobs` stores source identity, original/apply URLs, normalized fields, location, salary, classification, score reasons, freshness, raw JSONB, demo flag, and an optional `duplicate_of` reference. `source_syncs` stores per-attempt counters and history. `job_locations` supports multiple country/state locations. Source leases, health counters, and job missing-snapshot fields support safe scheduling and closure. The full field list lives in `services/api/app/models/job.py`.
+`job_sources` stores each provider/board identity, employer, configuration, enablement, timestamps and failure/review state. `jobs` stores source identity, original/apply URLs, normalized fields, location, salary, classification, score reasons, freshness, raw JSONB, demo flag and an optional `duplicate_of` reference. `source_syncs` stores per-attempt counters and history; `ingestion_runs` stores full/provider-run summaries. `job_locations` and `job_skills` support filters. Source leases and missing-snapshot fields support safe scheduling and closure. The full field list lives in `services/api/app/models/job.py`.
 
 Each `(source_id, source_job_id)` is unique. This scopes IDs to a board, avoiding collisions across companies. Duplicate source records remain in the database for provenance but are hidden from discovery. UTC timestamps are timezone-aware in PostgreSQL. Indexes support dashboard filters and duplicate candidates. Salary and score constraints guard invalid ranges.
 
@@ -147,9 +149,12 @@ Use a board identifier taken from the employer's public ATS URL, and supply the 
 python -m collectors greenhouse BOARD_TOKEN --company "Employer Name"
 python -m collectors lever SITE_NAME --company "Employer Name"
 python -m collectors ashby JOB_BOARD_NAME --company "Employer Name"
+python -m collectors.discover https://adobe.wd5.myworkdayjobs.com/en-US/external_experienced
+python -m collectors.discover_batch data/sources/workday-candidates.csv --output artifacts/discovery/workday.json
+python -m collectors.sync_all --provider workday --output artifacts/workday-summary.json
 ```
 
-Replace uppercase identifiers; they are not real example boards. Only public GET endpoints are used. No API key is required. Each command registers/updates its source, fetches the complete board, then normalizes, validates, classifies, and upserts postings. Re-running preserves IDs and discovery dates. JSON logs report fetched, created, updated, skipped, failures, and duration under `summary`. Exit code 1 indicates any failures so a scheduler can alert. Disabled sources are skipped. Run `python -m collectors.seed_sources` then `python -m collectors.sync_all` to ingest all enabled boards. `python -m collectors.scheduler` repeats at a configurable interval. Missing jobs close only after the configured successful-observation grace period.
+Replace uppercase identifiers; they are not real example boards. Public ATS endpoints require no key; Workday uses public CXS POST listing requests and GET details. USAJOBS uses its official authenticated API. Sources enter the enabled registry only after full verification. Collection normalizes, validates, classifies and upserts postings. Re-running preserves IDs and discovery dates. JSON logs report fetched, created, updated, unchanged, skipped, failed, closed and duration counters. Exit code 1 indicates failed or partial runs so a scheduler can alert. Run `python -m collectors.seed_sources` then `python -m collectors.sync_all` to ingest enabled boards. `python -m collectors.scheduler` is an optional local scheduler; production uses GitHub Actions. Missing jobs close only after the successful-observation grace period.
 
 See [ingestion details](docs/ingestion.md) for provider behavior and extension steps.
 
@@ -167,6 +172,8 @@ See [ingestion details](docs/ingestion.md) for provider behavior and extension s
 | `POST /sources`, `PATCH /sources/{uuid}`  | Development-only verified registration/settings       |
 | `POST /sources/{uuid}/sync`, `POST /sync` | Development-only manual sync                          |
 | `GET /stats`                              | Active U.S. canonical job totals and freshness counts |
+| `GET /stats/providers`                    | Provider counts, health and request costs              |
+| `GET /ingestion`                          | Read-only run history and operational counters         |
 
 `/jobs` accepts `q`, `role_family`, `seniority`, `remote_type`, `state`, `country`, `company`, `min_salary`, `max_experience`, `include_unknown_experience`, `include_senior`, `include_demo`, `min_early_career_score`, `posted_after`, `fresh_after`, `sort`, `page`, and `page_size`.
 
@@ -205,10 +212,10 @@ npx playwright test
 
 Windows browser tests use installed Microsoft Edge. On Linux/macOS, first run `npx playwright install chromium`. These tests cover discovery, filters, job details, persisted application status, source health/history, real application links, and mobile overflow. Screenshots go to the ignored `artifacts/` directory. Test results and environment limitations are recorded in [live verification](docs/live-ingestion-verification.md).
 
-## Limits and Phase 3
+## Known limitations and optional future work
 
-Coverage is limited to the configured public boards. English experience extraction, location parsing, and duplicate rules are conservative heuristics. Some employers omit publication dates or salary. Tracking remains browser-local, source history has no retention policy, and search uses SQL substring matching. The optional live tests check current availability but cannot guarantee future contracts.
+Coverage is limited to verified public boards. Workday tenant access and complete pagination vary; blocked or malformed boards are not enabled. Unchanged Workday descriptions may take up to six hours to refresh through the bounded detail cache, while listing membership is checked each sync. Initial imports can exceed the 30-minute trigger interval. English experience extraction, location parsing and duplicate rules are conservative heuristics; federal specialized experience is not automatically equivalent to graduate-level experience. Some employers omit publication dates or salary. Tracking/searches remain browser-local, source history has no retention policy and text search uses SQL substring matching. Optional live tests check current availability, not future provider contracts.
 
-Recommended Phase 3: evaluate matching against a human-labeled job set, improve experience alternatives and city-only location coverage, add saved searches and ingestion alerts, and introduce authenticated per-user application tracking when needed. Keep payments and AI scoring out of scope until discovery quality is measured.
+The new 150-posting holdout is independent of the reviewed Phase 3 sample and remains unlabeled for human review. Optional future work includes labeling that sample, broader verified employer coverage, accounts/cross-device tracking and email alerts. These are not another required MVP development phase. See the [portfolio summary](docs/portfolio-summary.md) for a concise technical explanation.
 
 See [live verification](docs/live-ingestion-verification.md), [ingestion and scheduling](docs/ingestion.md), [architecture](docs/architecture.md), and [deployment notes](infrastructure/README.md).

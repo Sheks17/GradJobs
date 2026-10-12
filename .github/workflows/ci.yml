@@ -30,6 +30,7 @@ jobs:
       - run: ruff format --check .
       - run: alembic upgrade head
       - run: alembic check
+      - run: python -m collectors.audit_production --output artifacts/ci-database-audit.json
       - run: pytest -q
   frontend:
     runs-on: ubuntu-latest

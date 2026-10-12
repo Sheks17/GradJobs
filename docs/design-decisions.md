@@ -44,9 +44,9 @@
 
 ## Provider isolation, complete snapshots and cooldowns
 **Problem:** A single failed detail or outage must not stop ingestion or incorrectly close postings.
-**Approach:** Bounded HTTP retries, source leases, provider concurrency, per-posting savepoints, complete-snapshot reconciliation, failure counters and timed cooldowns. Sources remain registered and flagged for review.
+**Approach:** Bounded HTTP retries, source leases, provider concurrency, per-posting savepoints, complete-snapshot reconciliation, failure counters and timed cooldowns. Validated writes commit every 100 rows to release the shared writer lock. Workday stops fetching after five consecutive detail failures. Sources remain registered and flagged for review.
 **Alternatives:** Global fail-fast collection, immediate deletion, or external circuit-breaker infrastructure.
-**Tradeoff:** Partial runs preserve safety at the expense of delayed closures. Permanent errors remain observable rather than being retried endlessly within one run.
+**Tradeoff:** Partial runs preserve valid committed batches at the expense of delayed closures; closure reconciliation occurs only after the entire snapshot passes validation. Permanent errors remain observable rather than being retried endlessly within one run.
 
 ## Browser-local application tracking and saved searches
 **Problem:** Users need organization without making accounts or supplying personal data.
@@ -56,7 +56,7 @@
 
 ## Workday requires separate treatment
 **Problem:** Workday uses tenant, hostname shard, locale and site-specific CXS endpoints; summaries omit descriptions and exact dates.
-**Approach:** Derive configuration from observed careers URLs, validate approved Workday hostnames, paginate against the initial count, fetch details with bounded concurrency and normalize stable posting IDs.
+**Approach:** Derive configuration from observed careers URLs, validate approved Workday hostnames, paginate against the initial count, fetch details with bounded concurrency and normalize stable posting IDs. Reuse unchanged details for at most six hours; changed summaries and new postings refresh immediately.
 **Alternatives:** Hardcoding one company, guessing tenant/site names, or accepting summaries as full jobs.
 **Tradeoff:** Initial imports require many detail requests; blocked tenants and endpoint limits are reported, not bypassed. Relative "Posted 30+ days" text never becomes an invented exact timestamp.
 

@@ -30,7 +30,9 @@ Run Actions → Scheduled employer ingestion → Run workflow before verifying j
 
 The existing local SQLite database is not uploaded. Production is populated from public source boards. To retain exact historic job IDs and first-seen timestamps, perform a separately reviewed database migration rather than committing or bundling a database file.
 
-For a schema release or targeted recovery, run Actions → Production database maintenance. Choose a provider to retry, `failed` to retry only completed sources with errors, or `none` to migrate without ingestion. Existing source leases and the database write lock still apply. The production employment-description column is text so long federal appointment/schedule labels are preserved.
+For a schema release or targeted recovery, run Actions → Production database maintenance. Choose a provider to retry, `failed` to retry only completed sources with errors, or `none` to migrate without ingestion. Maintenance shares the scheduled-ingestion concurrency group; source leases and database write locks also apply. A read-only `database-audit` artifact reports schema revision, table counts, indexes and JSONB columns without credentials. Migration lock/statement timeouts fail safely rather than waiting indefinitely. The production employment-description column is text so long federal appointment/schedule labels are preserved.
+
+The Workday cache is controlled by `WORKDAY_DETAIL_CACHE_HOURS=6`; source review/cooldown settings are `SOURCE_FAILURE_THRESHOLD=3` and `SOURCE_COOLDOWN_MINUTES=60`. These are optional server/Actions settings, never public credentials. Same-origin production CORS defaults to the canonical HTTPS deployment origin; configure an explicit JSON origin allowlist if the deployment domain changes.
 
 ## Build and deploy
 
