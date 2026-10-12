@@ -122,7 +122,7 @@ test("live discovery, filters, details, and persistent application tracking", as
   await expect(page.locator(`h2 a[href="${href}"]`)).toBeVisible();
   await page.locator(`h2 a[href="${href}"]`).click();
   await expect(
-    page.getByRole("heading", { name: title, exact: true }),
+    page.getByRole("heading", { name: title, exact: true, level: 1 }),
   ).toBeVisible();
   await expect(page.locator(".job-description")).not.toBeEmpty();
   await expect(

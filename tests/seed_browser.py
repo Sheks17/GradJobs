@@ -59,7 +59,11 @@ def seed():
                         remote_type="remote",
                         posted_at=now,
                         closing_at=now + timedelta(days=30) if provider == "usajobs" else None,
-                        provider_metadata={"agency": "Browser fixture agency"}
+                        provider_metadata={
+                            "federal": True,
+                            "agency": "Browser fixture agency",
+                            "department": "Browser fixture department",
+                        }
                         if provider == "usajobs"
                         else {},
                     ),
