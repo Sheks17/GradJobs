@@ -34,6 +34,8 @@ jobs:
       - run: pip install -r requirements-dev.lock && pip install --no-deps -e .
       - name: Migrate schema
         run: python -m collectors.production_check && python -m alembic upgrade head
+      - name: Register verified sources
+        run: python -m collectors.seed_sources
       - name: Recover provider
         if: inputs.provider != 'none' && inputs.provider != 'failed'
         run: python -m collectors.sync_all --provider "$RECOVERY_PROVIDER" --output recovery-summary.json

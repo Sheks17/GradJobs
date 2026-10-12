@@ -50,7 +50,24 @@ Source-supplied closing dates are stored as `closing_at`, shown on cards/details
 
 Normal tests use saved real public fixtures and mocked HTTP. Optional live checks must be enabled explicitly; credentials are required only for live USAJOBS checks. Run `python -m pytest -q` for offline coverage. A fresh provider-balanced evaluation sample is produced with `python -m matching.sample_pilot`, excluding every Phase 3 sample ID and leaving all human labels blank. Evaluate it with an explicit review file: `python -m matching.evaluate --input data/evaluation/phase4-pilot.json --reviews data/evaluation/phase4-pilot.csv`.
 
-Measured employer examples, ingestion counts, errors, timing, repeat-sync findings, and current live verification status are recorded in [Phase 4A verification](phase4a-provider-expansion.md). Workday, iCIMS, Jobvite, BambooHR and custom-site ingestion are future adapters, not implemented providers in this sprint.
+Measured earlier employer examples are recorded in [Phase 4A verification](phase4a-provider-expansion.md). Workday is implemented in the MVP sprint; current verified coverage and limitations are recorded in [MVP completion](mvp-completion.md). iCIMS, Jobvite, BambooHR and custom-site ingestion remain optional future adapters.
+
+## Workday and batch discovery
+
+Workday sources use `provider_config` with observed `careers_url`, `hostname`, `tenant`, `site` and `locale`. Hostname shards and site names are retained; identifiers are never derived from employer names. Only HTTPS employer `*.wdN.myworkdayjobs.com` hosts are accepted. The board token includes the hostname and site. Public CXS summary pages and detail responses provide stable posting IDs and exact dates where present; missing dates remain unknown. Each source allows two concurrent detail requests and the provider allows one source at a time by default.
+
+```powershell
+python -m collectors.discover https://adobe.wd5.myworkdayjobs.com/en-US/external_experienced
+python -m collectors.discover_batch data/sources/workday-candidates.csv --output artifacts/discovery/workday.json
+python -m collectors.discover_batch data/sources/workday-candidates.csv --output artifacts/discovery/workday.json --retry
+python -m collectors.verify_sources artifacts/candidates.json --output artifacts/verified.json --cache artifacts/verification
+python -m collectors.seed_sources --file artifacts/verified.json
+python -m collectors.sync_all --provider workday --output artifacts/workday-sync.json
+```
+
+Batch discovery writes resumable candidate stages but never enables sources. Discovery validates list access, pagination and one detail; full snapshot verification additionally normalizes every posting. Only full verified records are promoted into the enabled registry. Malformed summaries, missing descriptions, blocked requests or detail failures prevent complete-snapshot closure reconciliation. Real Workday boards return `total: 0` on later pages; pagination uses the first page's count. No anti-bot bypass is implemented. Avoid interpreting a provider-reported limit as complete global employer coverage.
+
+Source failures have a configurable review threshold (`SOURCE_FAILURE_THRESHOLD=3`) and retry cooldown (`SOURCE_COOLDOWN_MINUTES=60`). Sources remain registered and enabled while flagged; they are retried after cooldown. `/api/ingestion` and `/admin/ingestion` expose read-only counters and history. Failed and partial scheduled runs exit nonzero and retain JSON artifacts.
 
 Optional Phase 4 live checks (no job writes):
 

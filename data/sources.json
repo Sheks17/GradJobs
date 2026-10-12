@@ -650,5 +650,21 @@
     "enabled": true,
     "verified_at": "2026-10-10T22:49:23.974834+00:00",
     "verification_url": "https://api.ashbyhq.com/posting-api/job-board/replit"
+  },
+  {
+    "provider": "workday",
+    "board_token": "adobe-wd5-myworkdayjobs-com-external_experienced",
+    "company_name": "Adobe",
+    "careers_url": "https://adobe.wd5.myworkdayjobs.com/en-US/external_experienced",
+    "provider_config": {
+      "hostname": "adobe.wd5.myworkdayjobs.com",
+      "tenant": "adobe",
+      "site": "external_experienced",
+      "locale": "en-US",
+      "careers_url": "https://adobe.wd5.myworkdayjobs.com/en-US/external_experienced"
+    },
+    "enabled": true,
+    "verified_at": "2026-10-12T09:24:40.509833+00:00",
+    "verification_url": "https://adobe.wd5.myworkdayjobs.com/wday/cxs/adobe/external_experienced"
   }
 ]
