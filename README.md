@@ -31,6 +31,10 @@ See [design decisions](docs/design-decisions.md), [MVP completion and measured s
 
 The MVP supports Greenhouse, Lever, Ashby, SmartRecruiters, USAJOBS and Workday through one normalized job model. It provides freshness and relevance filters, explainable scores, original employer application links, browser-local application tracking and named saved searches. Source health and ingestion history make partial failures visible. Current timestamped scale and verification evidence are in the [completion report](docs/mvp-completion.md).
 
+![Production dashboard with the Software Engineering filter](docs/images/dashboard-2026-10-12.jpg)
+
+Production screenshot, 12 October 2026; displayed counts change as sources refresh.
+
 Phase 3 adds separate required/preferred experience, contextual title levels, deterministic skills, fit evidence, confidence and conflict flags, and skill/category and quick filters. The user confirmed review of all 220 Phase 3 postings: precision 100%, recall 98.7%, F1 99.4%, and four-class accuracy 99.1%. See [matching methodology](docs/matching.md) and [validation provenance and report](docs/phase3-validation.md).
 
 Phase 4A adds SmartRecruiters and the official USAJOBS API, provider configuration/capabilities, bounded concurrent ingestion, provider health, federal metadata, closing deadlines, and advanced provider filtering. See [provider setup](docs/providers.md) and [measured Phase 4A verification](docs/phase4a-provider-expansion.md). Matching version 3.0.0 and cutoff 50 remain frozen. The separate 100-posting provider pilot has blank labels for later independent review; prior metrics do not establish accuracy on new providers. Local evaluation datasets, review records, and database snapshots are excluded from the public repository.

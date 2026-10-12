@@ -1,0 +1,78 @@
+[
+  {
+    "provider": "workday",
+    "board_token": "leidos-wd5-myworkdayjobs-com-External",
+    "company_name": "Leidos",
+    "careers_url": "https://leidos.wd5.myworkdayjobs.com/en-US/External",
+    "provider_config": {
+      "hostname": "leidos.wd5.myworkdayjobs.com",
+      "tenant": "leidos",
+      "site": "External",
+      "locale": "en-US",
+      "careers_url": "https://leidos.wd5.myworkdayjobs.com/en-US/External"
+    },
+    "enabled": false,
+    "verified_at": "2026-10-12T10:00:55.363480+00:00",
+    "verification_url": "https://leidos.wd5.myworkdayjobs.com/wday/cxs/leidos/External",
+    "status": "verified",
+    "visible_jobs_at_verification": 2000,
+    "verification_scope": "Complete reported snapshot, details and normalization; repeat listing/ID/link checks. Not ingested in production."
+  },
+  {
+    "provider": "workday",
+    "board_token": "illumina-wd1-myworkdayjobs-com-illumina-careers",
+    "company_name": "Illumina",
+    "careers_url": "https://illumina.wd1.myworkdayjobs.com/en-US/illumina-careers",
+    "provider_config": {
+      "hostname": "illumina.wd1.myworkdayjobs.com",
+      "tenant": "illumina",
+      "site": "illumina-careers",
+      "locale": "en-US",
+      "careers_url": "https://illumina.wd1.myworkdayjobs.com/en-US/illumina-careers"
+    },
+    "enabled": false,
+    "verified_at": "2026-10-12T10:20:03.188901+00:00",
+    "verification_url": "https://illumina.wd1.myworkdayjobs.com/wday/cxs/illumina/illumina-careers",
+    "status": "verified",
+    "visible_jobs_at_verification": 162,
+    "verification_scope": "Complete reported snapshot, details and normalization; repeat listing/ID/link checks. Not ingested in production."
+  },
+  {
+    "provider": "workday",
+    "board_token": "millerknoll-wd1-myworkdayjobs-com-MillerKnoll",
+    "company_name": "MillerKnoll",
+    "careers_url": "https://millerknoll.wd1.myworkdayjobs.com/en-US/MillerKnoll",
+    "provider_config": {
+      "hostname": "millerknoll.wd1.myworkdayjobs.com",
+      "tenant": "millerknoll",
+      "site": "MillerKnoll",
+      "locale": "en-US",
+      "careers_url": "https://millerknoll.wd1.myworkdayjobs.com/en-US/MillerKnoll"
+    },
+    "enabled": false,
+    "verified_at": "2026-10-12T10:21:32.914945+00:00",
+    "verification_url": "https://millerknoll.wd1.myworkdayjobs.com/wday/cxs/millerknoll/MillerKnoll",
+    "status": "verified",
+    "visible_jobs_at_verification": 228,
+    "verification_scope": "Complete reported snapshot, details and normalization; repeat listing/ID/link checks. Not ingested in production."
+  },
+  {
+    "provider": "workday",
+    "board_token": "wf-wd1-myworkdayjobs-com-WellsFargoJobs",
+    "company_name": "Wells Fargo",
+    "careers_url": "https://wf.wd1.myworkdayjobs.com/en-US/WellsFargoJobs",
+    "provider_config": {
+      "hostname": "wf.wd1.myworkdayjobs.com",
+      "tenant": "wf",
+      "site": "WellsFargoJobs",
+      "locale": "en-US",
+      "careers_url": "https://wf.wd1.myworkdayjobs.com/en-US/WellsFargoJobs"
+    },
+    "enabled": false,
+    "verified_at": "2026-10-12T10:23:31.532754+00:00",
+    "verification_url": "https://wf.wd1.myworkdayjobs.com/wday/cxs/wf/WellsFargoJobs",
+    "status": "verified",
+    "visible_jobs_at_verification": 1370,
+    "verification_scope": "Complete reported snapshot, details and normalization; repeat listing/ID/link checks. Not ingested in production."
+  }
+]

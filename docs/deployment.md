@@ -30,6 +30,12 @@ Run Actions → Scheduled employer ingestion → Run workflow before verifying j
 
 The existing local SQLite database is not uploaded. Production is populated from public source boards. To retain exact historic job IDs and first-seen timestamps, perform a separately reviewed database migration rather than committing or bundling a database file.
 
+The twice-hourly trigger uses minutes 7 and 37 UTC to avoid the top-of-hour peak.
+This is a best-effort schedule: [GitHub documents delays and dropped scheduled
+events under high load](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+Confirm an actual `schedule` event in Actions; a successful manual dispatch proves
+cloud ingestion but does not prove that GitHub has delivered a timer event.
+
 For a schema release or targeted recovery, run Actions → Production database maintenance. Choose a provider to retry, `failed` to retry only completed sources with errors, or `none` to migrate without ingestion. Maintenance shares the scheduled-ingestion concurrency group; source leases and database write locks also apply. A read-only `database-audit` artifact reports schema revision, table counts, indexes and JSONB columns without credentials. Migration lock/statement timeouts fail safely rather than waiting indefinitely. The production employment-description column is text so long federal appointment/schedule labels are preserved.
 
 The Workday cache is controlled by `WORKDAY_DETAIL_CACHE_HOURS=6`; source review/cooldown settings are `SOURCE_FAILURE_THRESHOLD=3` and `SOURCE_COOLDOWN_MINUTES=60`. These are optional server/Actions settings, never public credentials. Same-origin production CORS defaults to the canonical HTTPS deployment origin; configure an explicit JSON origin allowlist if the deployment domain changes.

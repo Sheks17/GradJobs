@@ -46,6 +46,7 @@ class WorkdayCollector(Collector):
         "fetch_detail": True,
         "pagination": True,
         "posted_date": True,
+        "salary": True,
         "closing_date": True,
     }
 
