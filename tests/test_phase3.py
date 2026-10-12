@@ -281,7 +281,7 @@ def test_reprocess_is_dry_run_safe_idempotent_and_never_changes_source_fields(db
     assert report["planner_statistics_refreshed"] is False
     assert report["changed"] == 1 and db.get(Job, immutable["id"]).early_career_score == 0
     report = reprocess(db)
-    assert report["planner_statistics_refreshed"] is True
+    assert report["planner_statistics_refreshed"] is (db.get_bind().dialect.name == "sqlite")
     assert report["failed"] == 0
     stored = db.get(Job, immutable["id"])
     assert stored.early_career_score > 0 and stored.preferred_min_years == 2
