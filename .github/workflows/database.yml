@@ -20,6 +20,7 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.INGESTION_DATABASE_URL }}
       APP_ENV: production
+      PGOPTIONS: '-c lock_timeout=5000 -c statement_timeout=60000'
       USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
       USAJOBS_USER_AGENT: ${{ secrets.USAJOBS_USER_AGENT }}
       RECOVERY_PROVIDER: ${{ inputs.provider }}
