@@ -2,6 +2,8 @@
 
 The current design and job features are preserved. `vercel.json` deploys Next.js from `apps/web` and FastAPI from the repository root as Vercel Services. Import the repository with Root Directory `.`; do not change the root to `apps/web`. The first rewrite sends `/api/*` to FastAPI; the second sends page and asset requests to Next.js. Vercel Services is currently beta.
 
+Published repository: https://github.com/Sheks17/GradJobs. Production site: https://gradjobs-drab.vercel.app. The production domain is publicly reachable without signing in; generated preview deployment URLs may retain Vercel authentication.
+
 ## Accounts and initial publication
 
 Authenticate the official GitHub and Vercel CLIs with `gh auth login --web` and `npx vercel login`. Never put tokens in source files or pass them in committed commands. With no configured remote, create a public repository named `GradJobs` with `gh repo create GradJobs --public --source . --remote origin --push`. If that name already exists, inspect and reuse the existing repository before pushing; never overwrite its history.
@@ -32,7 +34,7 @@ The existing local SQLite database is not uploaded. Production is populated from
 
 From `apps/web`, run `npm ci`, `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`, and `npm run build`. From the root, run `python -m ruff check .`, `python -m ruff format --check .`, and `python -m pytest -q`. Python 3.12 is selected for the API runtime. `requirements.txt` contains runtime dependency versions matching the tested development lock.
 
-Deploy from the root with `npx vercel --prod`. Enable public access to the production deployment for portfolio visitors; do not disable protection on private preview deployments unnecessarily.
+Deploy from the root with `npx vercel --prod`. The npm lockfile includes Linux optional dependency peers and was validated in Vercel's Linux build. Public production access is verified independently of authenticated CLI access.
 
 ## Live verification and limitations
 

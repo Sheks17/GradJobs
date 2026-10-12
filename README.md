@@ -2,6 +2,8 @@
 
 **Find the opportunities built for the start of your career.**
 
+[Live application](https://gradjobs-drab.vercel.app) · [GitHub repository](https://github.com/Sheks17/GradJobs)
+
 GradJobs is a live job discovery and tracking application for U.S. students, graduates, and early-career technology candidates. It collects supported public employer job boards, preserves source data, groups clear duplicates, and explains a rule-based early-career score. It does not claim complete coverage of the job market.
 
 ## What is included
