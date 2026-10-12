@@ -89,7 +89,7 @@ class Job(Timestamps, Base):
     state: Mapped[str | None] = mapped_column(String(100), index=True)
     country: Mapped[str | None] = mapped_column(String(2))
     remote_type: Mapped[str] = mapped_column(String(20), default="unknown", index=True)
-    employment_type: Mapped[str | None] = mapped_column(String(100))
+    employment_type: Mapped[str | None] = mapped_column(Text().with_variant(String(100), "sqlite"))
     salary_min: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     salary_max: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     salary_currency: Mapped[str | None] = mapped_column(String(3))

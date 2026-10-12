@@ -1,0 +1,44 @@
+name: Production database maintenance
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: Optional provider recovery after migration
+        type: choice
+        default: none
+        options: [none, greenhouse, lever, ashby, smartrecruiters, usajobs]
+permissions:
+  contents: read
+concurrency:
+  group: gradjobs-database-maintenance
+  cancel-in-progress: false
+jobs:
+  maintain:
+    if: vars.INGESTION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      DATABASE_URL: ${{ secrets.INGESTION_DATABASE_URL }}
+      APP_ENV: production
+      USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
+      USAJOBS_USER_AGENT: ${{ secrets.USAJOBS_USER_AGENT }}
+      RECOVERY_PROVIDER: ${{ inputs.provider }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.lock
+      - run: pip install -r requirements-dev.lock && pip install --no-deps -e .
+      - name: Migrate schema
+        run: python -m alembic upgrade head
+      - name: Recover provider
+        if: inputs.provider != 'none'
+        run: python -m collectors.sync_all --provider "$RECOVERY_PROVIDER" --output recovery-summary.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-summary
+          path: recovery-summary.json
+          retention-days: 14
