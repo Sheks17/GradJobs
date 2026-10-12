@@ -26,7 +26,7 @@ Set these in GitHub → repository Settings → Secrets and variables → Action
 | `INGESTION_ENABLED` | Variable | `true` |
 | `COLLECTOR_USER_AGENT` | Variable | Optional public collector identity; do not include private credentials |
 
-Run Actions → Scheduled employer ingestion → Run workflow before verifying job search. It migrates the database, registers source configurations, and ingests real postings. An initial full sync may take around 20 minutes or longer; the job allows 60 minutes. The workflow runs every 30 minutes after activation; GitHub schedules may be delayed. Do not run collectors inside a Vercel web request or start the foreground scheduler in a serverless function.
+Run Actions → Scheduled employer ingestion → Run workflow before verifying job search. It migrates the database, registers source configurations, and ingests real postings. A hosted database adds network round trips: the initial import can take substantially longer than the measured local SQLite run. The job allows three hours, and concurrency prevents overlapping full imports. The workflow is scheduled every 30 minutes after activation; GitHub schedules may be delayed and long runs serialize. Do not run collectors inside a Vercel web request or start the foreground scheduler in a serverless function.
 
 The existing local SQLite database is not uploaded. Production is populated from public source boards. To retain exact historic job IDs and first-seen timestamps, perform a separately reviewed database migration rather than committing or bundling a database file.
 

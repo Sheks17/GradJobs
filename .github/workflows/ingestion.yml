@@ -12,7 +12,7 @@ jobs:
   sync:
     if: vars.INGESTION_ENABLED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       DATABASE_URL: ${{ secrets.INGESTION_DATABASE_URL }}
       COLLECTOR_USER_AGENT: ${{ vars.COLLECTOR_USER_AGENT || 'GradJobs/0.2 (public job discovery)' }}
