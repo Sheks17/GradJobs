@@ -730,5 +730,141 @@
     "enabled": true,
     "verified_at": "2026-10-12T09:37:14.988029+00:00",
     "verification_url": "https://autodesk.wd1.myworkdayjobs.com/wday/cxs/autodesk/Ext"
+  },
+  {
+    "provider": "ashby",
+    "board_token": "chartahealth",
+    "company_name": "Charta Health",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/chartahealth",
+    "verified_at": "2026-10-12T10:05:09.535716+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/chartahealth",
+    "enabled": true
+  },
+  {
+    "provider": "ashby",
+    "board_token": "nectar-social",
+    "company_name": "Nectar",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/nectar-social",
+    "verified_at": "2026-10-12T10:05:11.050902+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/nectar-social",
+    "enabled": true
+  },
+  {
+    "provider": "ashby",
+    "board_token": "hipp",
+    "company_name": "Hipp Health",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/hipp",
+    "verified_at": "2026-10-12T10:05:12.341632+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/hipp",
+    "enabled": true
+  },
+  {
+    "provider": "ashby",
+    "board_token": "uniswap",
+    "company_name": "Uniswap Labs",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/uniswap",
+    "verified_at": "2026-10-12T10:05:13.575756+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/uniswap",
+    "enabled": true
+  },
+  {
+    "provider": "greenhouse",
+    "board_token": "ziprecruiter",
+    "company_name": "ZipRecruiter",
+    "provider_config": {},
+    "careers_url": "https://boards.greenhouse.io/ziprecruiter",
+    "verified_at": "2026-10-12T10:05:14.818288+00:00",
+    "verification_url": "https://boards-api.greenhouse.io/v1/boards/ziprecruiter/jobs",
+    "enabled": true
+  },
+  {
+    "provider": "greenhouse",
+    "board_token": "cssmerge",
+    "company_name": "Atoms",
+    "provider_config": {},
+    "careers_url": "https://boards.greenhouse.io/cssmerge",
+    "verified_at": "2026-10-12T10:05:16.439683+00:00",
+    "verification_url": "https://boards-api.greenhouse.io/v1/boards/cssmerge/jobs",
+    "enabled": true
+  },
+  {
+    "provider": "lever",
+    "board_token": "larian",
+    "company_name": "Larian Studios",
+    "provider_config": {},
+    "careers_url": "https://jobs.lever.co/larian",
+    "verified_at": "2026-10-12T10:05:19.011257+00:00",
+    "verification_url": "https://api.lever.co/v0/postings/larian",
+    "enabled": true
+  },
+  {
+    "provider": "ashby",
+    "board_token": "ivo-inc",
+    "company_name": "Ivo",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/ivo-inc",
+    "verified_at": "2026-10-12T10:05:21.641023+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/ivo-inc",
+    "enabled": true
+  },
+  {
+    "provider": "greenhouse",
+    "board_token": "canonical",
+    "company_name": "Canonical",
+    "provider_config": {},
+    "careers_url": "https://boards.greenhouse.io/canonical",
+    "verified_at": "2026-10-12T10:05:23.028650+00:00",
+    "verification_url": "https://boards-api.greenhouse.io/v1/boards/canonical/jobs",
+    "enabled": true
+  },
+  {
+    "provider": "greenhouse",
+    "board_token": "alphasense",
+    "company_name": "AlphaSense",
+    "provider_config": {},
+    "careers_url": "https://boards.greenhouse.io/alphasense",
+    "verified_at": "2026-10-12T10:05:25.850643+00:00",
+    "verification_url": "https://boards-api.greenhouse.io/v1/boards/alphasense/jobs",
+    "enabled": true
+  },
+  {
+    "provider": "ashby",
+    "board_token": "plenful",
+    "company_name": "Plenful",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/plenful",
+    "verified_at": "2026-10-12T10:05:27.980321+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/plenful",
+    "enabled": true
+  },
+  {
+    "provider": "ashby",
+    "board_token": "knowtex",
+    "company_name": "Knowtex",
+    "provider_config": {},
+    "careers_url": "https://jobs.ashbyhq.com/knowtex",
+    "verified_at": "2026-10-12T10:05:29.283482+00:00",
+    "verification_url": "https://api.ashbyhq.com/posting-api/job-board/knowtex",
+    "enabled": true
+  },
+  {
+    "provider": "workday",
+    "board_token": "intel-wd1-myworkdayjobs-com-External",
+    "company_name": "Intel",
+    "provider_config": {
+      "hostname": "intel.wd1.myworkdayjobs.com",
+      "tenant": "intel",
+      "site": "External",
+      "locale": "en-US",
+      "careers_url": "https://intel.wd1.myworkdayjobs.com/en-US/External"
+    },
+    "careers_url": "https://intel.wd1.myworkdayjobs.com/en-US/External",
+    "verified_at": "2026-10-12T09:55:06.743305+00:00",
+    "verification_url": "https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External",
+    "enabled": true
   }
 ]

@@ -22,9 +22,14 @@ def discover_batch(path, output, retry=False):
         try:
             result = discover(url)
             record.update(result)
+            if result.get("verified") and result.get("jobs") == 0:
+                record.update(
+                    verified=False,
+                    reason="Endpoint reachable but no usable postings; not eligible for activation",
+                )
             record["stage"] = (
                 "verified"
-                if result["verified"]
+                if record["verified"]
                 else "provider_detected"
                 if result["provider"] != "unknown"
                 else "rejected"
