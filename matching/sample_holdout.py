@@ -95,7 +95,8 @@ def sample(base, exclude, output, seed=20261012):
         "label_policy": "Human review only; matching engine frozen.",
         "sampling_policy": (
             "25 per provider, random within first 300 company-sorted active canonical postings; "
-            "excludes prior source IDs and URLs. Not prevalence weighted."
+            "excludes prior source IDs, URLs and normalized title/description fingerprints. "
+            "Not prevalence weighted."
         ),
         "provider_counts": dict(Counter(row["source"] for row in records)),
         "jobs": records,

@@ -47,6 +47,32 @@ def test_workday_configuration_and_no_guesses():
             workday_config(url)
 
 
+def test_detail_outage_opens_circuit_and_stops_pagination():
+    detail_requests = []
+    pages = []
+
+    def handler(request):
+        if request.method == "POST":
+            pages.append(request)
+            return httpx.Response(
+                200,
+                json={
+                    "total": 100,
+                    "jobPostings": [{"externalPath": f"/job/X/R{i}"} for i in range(20)],
+                },
+            )
+        detail_requests.append(request)
+        return httpx.Response(503)
+
+    c = collector(handler)
+    rows = c.fetch()
+    assert c.circuit_open and not c.snapshot_complete
+    assert len(pages) == 1 and len(rows) == 20
+    assert len(detail_requests) <= 6 * 4  # Five failures, at most one concurrent request.
+    assert any(row.get("detail_error") == "CircuitOpen" for row in rows)
+    c.client.close()
+
+
 def test_pagination_details_dates_locations_duplicate_sync_and_changes(db, monkeypatch):
     revision = [0]
 

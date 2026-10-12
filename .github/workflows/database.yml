@@ -10,7 +10,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: gradjobs-database-maintenance
+  group: gradjobs-ingestion
   cancel-in-progress: false
 jobs:
   maintain:
@@ -37,6 +37,8 @@ jobs:
         run: python -m collectors.production_check && python -m alembic upgrade head
       - name: Register verified sources
         run: python -m collectors.seed_sources
+      - name: Audit production database
+        run: python -m collectors.audit_production --output database-audit.json
       - name: Recover provider
         if: inputs.provider != 'none' && inputs.provider != 'failed'
         run: python -m collectors.sync_all --provider "$RECOVERY_PROVIDER" --output recovery-summary.json
@@ -48,4 +50,10 @@ jobs:
         with:
           name: recovery-summary
           path: recovery-summary.json
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: database-audit
+          path: database-audit.json
           retention-days: 14

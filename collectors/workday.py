@@ -3,6 +3,7 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
+from threading import Lock
 from urllib.parse import urlsplit
 
 from collectors.base import Collector
@@ -59,6 +60,9 @@ class WorkdayCollector(Collector):
             self.close()
             raise ValueError("Workday board token conflicts with careers URL")
         self.detail_cache = {}
+        self.failure_lock = Lock()
+        self.detail_failures = 0
+        self.circuit_open = False
         self.careers_url = observed["careers_url"]
         self.endpoint = (
             f"https://{observed['hostname']}/wday/cxs/{observed['tenant']}/{observed['site']}"
@@ -66,6 +70,8 @@ class WorkdayCollector(Collector):
 
     def fetch(self):
         self.snapshot_complete = True
+        self.detail_failures = 0
+        self.circuit_open = False
         rows, seen, offset, snapshot_total = [], set(), 0, None
         for _ in range(int(self.config.get("max_pages", 100))):
             page = self.request_json(
@@ -114,12 +120,17 @@ class WorkdayCollector(Collector):
             if any(row.get("detail_error") for row in details):
                 self.snapshot_complete = False
             rows.extend(details)
+            if self.circuit_open:
+                return rows  # Partial snapshot: never reconcile closures after an outage.
             offset += len(listings)
             if offset >= snapshot_total:
                 return rows
         raise ValueError("Workday page limit reached; snapshot incomplete")
 
     def fetch_detail(self, listing):
+        with self.failure_lock:
+            if self.circuit_open:
+                return {"listing": listing, "detail_error": "CircuitOpen"}
         path = listing["externalPath"]
         cached = self.detail_cache.get(path)
         if cached and cached.get("detail") and cached.get("_detail_checked_at"):
@@ -149,8 +160,14 @@ class WorkdayCollector(Collector):
                 "_detail_checked_at": datetime.now(UTC).isoformat(),
             }
             self.detail_cache[path] = result
+            with self.failure_lock:
+                self.detail_failures = 0
             return result
         except Exception as exc:
+            with self.failure_lock:
+                self.detail_failures += 1
+                if self.detail_failures >= 5:
+                    self.circuit_open = True
             return {"listing": listing, "detail_error": type(exc).__name__}
 
     def normalize(self, raw):
