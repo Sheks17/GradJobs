@@ -125,3 +125,41 @@ def test_malformed_snapshot(payload):
     with pytest.raises(ValueError):
         c.fetch()
     c.client.close()
+
+
+def test_workday_closed_posting_requires_complete_missing_snapshots(db):
+    from datetime import timedelta
+
+    from collectors.lifecycle import utc
+    from services.api.app.db.session import utcnow
+
+    open_board = [True]
+
+    def handler(request):
+        if request.method == "POST":
+            return httpx.Response(
+                200,
+                json={
+                    "total": int(open_board[0]),
+                    "jobPostings": [{"externalPath": "/job/X/R1"}] if open_board[0] else [],
+                },
+            )
+        return httpx.Response(200, json=DETAIL)
+
+    c = collector(handler)
+    assert sync_source(db, c).created == 1
+    job = db.scalar(select(Job))
+    original_id, first_seen = job.id, job.first_seen_at
+    open_board[0] = False
+    assert sync_source(db, c).closed == 0
+    assert sync_source(db, c).closed == 0
+    job.missing_since = utcnow() - timedelta(days=4)
+    db.commit()
+    assert sync_source(db, c).closed == 1
+    db.refresh(job)
+    assert not job.is_active
+    open_board[0] = True
+    assert sync_source(db, c).updated == 1
+    db.refresh(job)
+    assert job.is_active and job.id == original_id and utc(job.first_seen_at) == utc(first_seen)
+    c.client.close()

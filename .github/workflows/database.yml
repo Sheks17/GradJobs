@@ -20,7 +20,6 @@ jobs:
     env:
       DATABASE_URL: ${{ secrets.INGESTION_DATABASE_URL }}
       APP_ENV: production
-      PGOPTIONS: '-c lock_timeout=5000 -c statement_timeout=60000'
       USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
       USAJOBS_USER_AGENT: ${{ secrets.USAJOBS_USER_AGENT }}
       RECOVERY_PROVIDER: ${{ inputs.provider }}
@@ -33,6 +32,8 @@ jobs:
           cache-dependency-path: requirements-dev.lock
       - run: pip install -r requirements-dev.lock && pip install --no-deps -e .
       - name: Migrate schema
+        env:
+          PGOPTIONS: '-c lock_timeout=5000 -c statement_timeout=60000'
         run: python -m collectors.production_check && python -m alembic upgrade head
       - name: Register verified sources
         run: python -m collectors.seed_sources
