@@ -136,6 +136,7 @@ def _sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dic
         source_order = {str(identity): index for index, (identity, _) in enumerate(records)}
         results.sort(key=lambda row: source_order[row["source_id"]])
     expired = 0
+    maintenance_error = None
     if not dry_run:
         try:
             with SessionLocal() as db:
@@ -144,6 +145,7 @@ def _sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dic
                 db.commit()
                 refresh_sqlite_statistics(db)
         except Exception as exc:
+            maintenance_error = type(exc).__name__
             logger.warning("post_sync_maintenance_failed", extra={"error_type": type(exc).__name__})
     provider_results = []
     for kind in groups:
@@ -177,6 +179,7 @@ def _sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dic
         "dry_run": dry_run,
         "concurrency": workers,
         "jobs_expired": expired,
+        "maintenance_error_type": maintenance_error,
         "sources_attempted": len(records),
         "sources_successful": sum(r["status"] in {"success", "dry_run"} for r in results),
         "sources_failed": sum(r["status"] == "failed" for r in results),
@@ -203,7 +206,10 @@ def _sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dic
         "failed"
         if results and summary["sources_failed"] == len(results)
         else "partial"
-        if summary["sources_failed"] or summary["sources_partial"] or summary["sources_skipped"]
+        if summary["sources_failed"]
+        or summary["sources_partial"]
+        or summary["sources_skipped"]
+        or maintenance_error
         else "success"
     )
     return summary

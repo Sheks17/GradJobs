@@ -4,6 +4,7 @@ import argparse
 import json
 import statistics
 import time
+from datetime import timedelta
 from pathlib import Path
 
 import httpx
@@ -12,13 +13,19 @@ from services.api.app.db.session import utcnow
 
 
 def benchmark(base, output):
+    fresh_after = (
+        (utcnow() - timedelta(days=7)).isoformat(timespec="seconds").replace("+00:00", "Z")
+    )
     cases = {
         "homepage": "/",
         "health": "/api/health",
         "stats": "/api/stats",
         "providers": "/api/stats/providers",
         "sources": "/api/sources",
-        "default_jobs": "/api/jobs?min_early_career_score=50&include_senior=false&page_size=12",
+        "default_jobs": (
+            "/api/jobs?min_early_career_score=50&include_senior=false&page_size=12&fresh_after="
+            + fresh_after
+        ),
         "text_search": "/api/jobs?q=software&page_size=12",
         "skill": "/api/jobs?skill=python&page_size=12",
         "freshness": "/api/jobs?fresh_after="

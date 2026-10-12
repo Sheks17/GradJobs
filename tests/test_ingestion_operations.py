@@ -78,6 +78,22 @@ def test_retryable_database_failure_uses_savepoint(db, source, monkeypatch):
     assert created and job.source_job_id == "1" and len(calls) == 2
 
 
+def test_lifecycle_maintenance_failure_is_visible_in_run_status(db, monkeypatch):
+    import collectors.sync_all as module
+
+    monkeypatch.setattr(module, "SessionLocal", lambda: Session(db.bind))
+
+    def unavailable(*args):
+        raise OperationalError("redacted", {}, RuntimeError("Fixture failure"))
+
+    monkeypatch.setattr(module, "expire_deadlines", unavailable)
+    summary = module.sync_all()
+    assert summary["status"] == "partial"
+    assert summary["maintenance_error_type"] == "OperationalError"
+    run = db.get(IngestionRun, UUID(summary["run_id"]))
+    assert run.status == "partial" and run.summary["maintenance_error_type"] == "OperationalError"
+
+
 def test_large_snapshots_release_writer_between_batches(db, monkeypatch):
     from sqlalchemy import event, func
 
