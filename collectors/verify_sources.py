@@ -33,9 +33,14 @@ def verify_file(input_path: Path, output_path: Path, cache_dir: Path) -> None:
             )
             rows = collector.fetch()
             failures = []
+            identities = set()
             for index, row in enumerate(rows):
                 try:
-                    collector.normalize(row)
+                    normalized = collector.normalize(row)
+                    if normalized:
+                        if normalized.source_job_id in identities:
+                            raise ValueError("Duplicate stable posting ID in snapshot")
+                        identities.add(normalized.source_job_id)
                 except Exception as exc:
                     failures.append({"row": index, "error": str(exc)[:400]})
             record.update(

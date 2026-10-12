@@ -186,6 +186,12 @@ class WorkdayCollector(Collector):
         else:
             state = city = None
         workplace = info.get("remoteType")
+        if (
+            workplace
+            and workplace.lower() == "flex"
+            and re.search(r"in.person time and remote", description, re.I)
+        ):
+            workplace = "hybrid"  # Explicit employer Flex Work policy, not a label assumption.
         if not workplace:
             tag = re.search(r"#LI-(Remote|Hybrid|Onsite)", description, re.I)
             workplace = tag[1] if tag else None
@@ -208,17 +214,20 @@ class WorkdayCollector(Collector):
                 additional.append(value)
         salary = {}
         explicit = re.search(
-            r"\$([\d,]+(?:\.\d+)?)\s*(?:-|–|to)\s*\$?([\d,]+(?:\.\d+)?)\s*(?:USD|US Dollars)",
+            r"\$([\d,]+(?:\.\d+)?)\s*(?:USD|US Dollars)?\s*(?:-|–|to)\s*"
+            r"\$?([\d,]+(?:\.\d+)?)\s*(?:USD|US Dollars)",
             description,
             re.I,
         )
         if explicit:
             nearby = description[max(0, explicit.start() - 100) : explicit.end() + 100].lower()
+            preceding = description[max(0, explicit.start() - 1200) : explicit.start()].lower()
             period = (
-                "year"
-                if re.search(r"annual|per year|yearly", nearby)
-                else "hour"
+                "hour"
                 if "hour" in nearby
+                else "year"
+                if re.search(r"annual|per year|yearly", nearby)
+                or re.search(r"annual(?:ized)?\s+(?:base\s+)?salary\s+ranges?", preceding)
                 else None
             )
             if period:
@@ -254,6 +263,7 @@ class WorkdayCollector(Collector):
                 "site": self.config["site"],
                 "posted_on": info.get("postedOn"),
                 "can_apply": info.get("canApply"),
+                "workplace_label": info.get("remoteType"),
             },
             raw_data=raw,
             **salary,

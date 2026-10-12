@@ -73,6 +73,29 @@ def test_detail_outage_opens_circuit_and_stops_pagination():
     c.client.close()
 
 
+def test_explicit_salary_currency_on_both_bounds_and_flex_policy():
+    from decimal import Decimal
+
+    c = collector(lambda _: httpx.Response(200))
+    detail = copy.deepcopy(DETAIL)
+    info = detail["jobPostingInfo"]
+    info["remoteType"] = "Flex"
+    info["jobDescription"] = (
+        "The annualized base salary ranges for the primary location are listed below. "
+        + "Compensation depends on skills and business need. " * 5
+        + "Primary Location Base Pay Range: $137,000 USD - $205,400 USD. "
+        + "With Flex Work we combine in-person time and remote."
+    )
+    data = c.normalize({"listing": {"externalPath": "/job/X/R1"}, "detail": detail})
+    assert data.salary_min == Decimal(137000) and data.salary_max == Decimal(205400)
+    assert data.salary_currency == "USD" and data.salary_period == "year"
+    assert data.remote_type == "hybrid" and data.provider_metadata["workplace_label"] == "Flex"
+    info["jobDescription"] = "Python engineering opportunity."
+    unknown = c.normalize({"listing": {"externalPath": "/job/X/R1"}, "detail": detail})
+    assert unknown.remote_type == "unknown" and unknown.salary_min is None
+    c.client.close()
+
+
 def test_pagination_details_dates_locations_duplicate_sync_and_changes(db, monkeypatch):
     revision = [0]
 
