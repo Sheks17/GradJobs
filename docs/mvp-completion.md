@@ -1,45 +1,201 @@
 # GradJobs MVP completion report
 
-Status: validation in progress, 12 October 2026. This document is not a completion claim.
+Measured 12 October 2026. **GradJobs MVP is not yet complete:** implementation,
+deployment and validation are ready, but delivery of an actual GitHub Actions
+`schedule` event has not been observed. Manual cloud ingestion is verified.
+Timer verification is the only remaining blocker; no new development phase is
+required. Counts below are dated observations, not live marketing claims.
 
-## Verified baseline
+## Production and scale
 
-The live deployment is https://gradjobs-drab.vercel.app with API prefix
-https://gradjobs-drab.vercel.app/api. Next.js and FastAPI are separate Vercel services;
-the API serves requests, while GitHub Actions performs ingestion into managed Neon
-PostgreSQL. Ingestion does not depend on the local computer.
+- [Repository](https://github.com/Sheks17/GradJobs)
+- [Application](https://gradjobs-drab.vercel.app)
+- [API health](https://gradjobs-drab.vercel.app/api/health); API prefix `/api`.
+- **87 verified employers:** 83 enabled, four additional verified Workday
+  candidates disabled. One federal query source is counted separately.
+- **84 enabled sources**, 83 healthy and one partial Autodesk source.
+- **16,578 active canonical jobs**, all countries; **9,286 active U.S. jobs**.
+  These counts include all active roles, not just early-career recommendations.
+- PostgreSQL audit at **10:51:37 UTC**: 16,581 stored jobs, 27,120 location rows,
+  258 source-sync records, four ingestion runs; revision **b42f0c2026**.
 
-Before this sprint's deployment, a public measurement on 12 October found 7,098
-active U.S. jobs and 66 registered sources. These are timestamped observations, not
-current marketing counts. Use `/api/stats`, `/api/stats/providers`, `/api/sources`
-and `/api/ingestion` for current values.
+| Provider | Enabled sources | Active canonical jobs, all countries |
+| --- | ---: | ---: |
+| Greenhouse | 38 | 8,334 |
+| Lever | 9 | 2,344 |
+| Ashby | 25 | 2,420 |
+| SmartRecruiters | 5 | 1,061 |
+| USAJOBS | 1 | 382 |
+| Workday | 6 | 2,037 |
+| **Total** | **84** | **16,578** |
 
-Default search targets active U.S. jobs, the last seven days, cutoff 50, non-senior
-roles and freshness/fit ranking. Users can broaden the filters.
+Counts came from production after the latest full ingestion. `/api/stats` is
+U.S.-scoped; `/api/stats/providers` includes all countries and excludes duplicate
+aliases. Current values are available there and at `/api/sources`.
 
-## Matching validation
+## Workday and employer coverage
 
-Frozen matching version 3.0.0, cutoff 50. Reviewed 220-posting sample: precision
-100%, recall 98.7%, F1 99.4%, four-class accuracy 99.1%, zero false positives,
-one false negative. This does not establish universal accuracy or new-provider
-accuracy. The final holdout remains unlabeled until human review.
+Ten employers passed full reported pagination, details and normalization:
+Adobe, Autodesk, Intel, Leidos, Illumina, MillerKnoll, Wells Fargo, Guidewire,
+Zendesk and Workday. Adobe, Autodesk, Intel, Guidewire, Zendesk and Workday are
+enabled in production; the other four remain verified candidates. See
+[employer-level verification](phase4b-workday-verification.md).
 
-## Baseline performance
+Fresh repeat pagination confirmed unique IDs and stable application links for
+common postings. Intel added one ID and lost one. Four Wells Fargo postings lacked
+location metadata; unknown values stay unknown. Leidos reported 2,000 postings;
+verification covers the reported snapshot, not complete global employer coverage.
+NVIDIA, Cisco, HPE and Cadence did not pass full validation; Qualcomm did not pass
+discovery. No challenges or access restrictions were bypassed.
 
-Three unauthenticated requests per route, measured from the development machine.
-Network latency and serverless cold starts are included; this is not a load test.
-Median default jobs: 115.7 ms; text search: 129.0 ms; Python skill filter: 108.2 ms;
-freshness: 85.5 ms; Greenhouse provider filter: 103.3 ms. Homepage HTTP response:
-51.9 ms. First health request: 2,320.4 ms, subsequent requests about 80 ms.
-Browser time to populated results is measured separately where available.
+The enabled registry grew from 65 employers plus one federal source to 83 employers
+plus one federal source. Twelve technology employers and six Workday boards were
+added after verification. The 200–300 target was not reached; it is not a quota.
+Empty, malformed and unverified sources were excluded. Resumable batch discovery
+preserves candidate stages without automatically enabling unverified sources.
+Four verified disabled configurations are committed separately from the registry.
 
-## Remaining completion checks
+## Database, hosting and ingestion
 
-- Full Workday snapshots and production ingestion, beyond discovery checks.
-- PostgreSQL CI and production additive migration.
-- Final browser, security and production smoke checks.
-- Fresh 150-posting holdout from six providers.
-- Final measured provider scale, successful run timestamp and test counts.
+Next.js/React/Tailwind and FastAPI are separate services in the existing Vercel
+project. Browser requests use same-origin `/api`; GitHub Actions performs long
+ingestion into persistent Neon PostgreSQL. The local computer is not needed.
+See the [architecture diagram](../README.md#problem-and-architecture),
+[deployment operations](deployment.md) and [engineering decisions](design-decisions.md).
 
-No new required phase is planned. Accounts, cross-device tracking, email/push,
-personalized matching and additional providers remain optional future work.
+The additive Alembic migration and repeated production maintenance succeeded.
+Read-only PostgreSQL audits verified revision, indexes, JSONB columns and counts.
+Production search/filter requests exercised the actual database. PostgreSQL CI
+validated upgrade and `alembic check` without schema drift. Production was never
+reset; a downloadable production backup was not available or claimed.
+
+Cadence is **twice hourly at minutes 7 and 37 UTC**, on default `main`.
+`INGESTION_ENABLED=true` and repository secret names were verified. Production
+validation rejects SQLite/missing database configuration. Ingestion and
+maintenance share a concurrency group, manual dispatch works, result artifacts
+are retained and partial runs exit unsuccessfully. Timer delivery is best effort;
+[GitHub documents scheduling delays](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+| Check | Observed result |
+| --- | --- |
+| Workday recovery | Six of six sources successful; completed **10:32:25 UTC**; 2,035 fetched, 666 created, 348 updated, 1,021 unchanged; 896.660 seconds |
+| Latest full run | Completed **10:43:32 UTC**; 83 successful, one partial, zero failed/zero skipped sources; **629.123 seconds** |
+| Full-run writes | 16,590 fetched; 1,038 created; 2,041 updated; 13,488 unchanged; 22 intentionally skipped; one invalid posting; three closed |
+| Latest successful source update | **10:43:32 UTC**; not a claim of an entirely successful full run |
+| Final database maintenance | Successful production migration/seed/read-only audit; no ingestion requested |
+| Timer event | Enabled/configured; no actual `schedule` event observed yet |
+
+Autodesk later returned a summary without an application path. Valid postings
+were processed, the source became partial, and closure reconciliation was skipped.
+A fresh diagnostic confirmed an invalid-path summary. IDs/links were not invented.
+The read-only `/admin/ingestion` page shows scope, history, durations, source health
+and daily write counts. Provider failure does not stop other employers.
+
+HTTP/database retries are bounded. Workday uses two detail workers, a six-hour
+persisted detail cache and a five-consecutive-failure circuit breaker. Source
+cooldowns flag repeated failures for review without deleting sources. Batches
+commit every 100 rows and renew leases; earlier validated writes survive later
+failures. Only repeated complete snapshots can close missing postings; partial
+snapshots cannot. Explicit closing deadlines are handled separately.
+
+## Matching and independent holdout
+
+Matching **version 3.0.0 and cutoff 50 remain frozen**. Reviewed 220-posting sample:
+**100% precision, 98.7% recall, 99.4% F1, 99.1% four-class accuracy, zero false
+positives, one false negative**. These describe that sample, not universal or
+new-provider accuracy.
+
+`data/evaluation/final_holdout_review.csv` and companion JSON contain **150 real
+production postings**, **25 per provider**, with blank human labels. Earlier sample
+IDs, URLs and normalized title/description fingerprints were excluded. Seed
+20261012 samples within a bounded company-sorted pool; it is provider balanced,
+not prevalence weighted. Predictions are informational; no holdout tuning occurred.
+Review files remain ignored local artifacts. Human labeling does not block MVP.
+
+## Testing and production smoke
+
+| Check | Result |
+| --- | --- |
+| Backend unit/integration/collector fixtures | **305 passed, 11 skipped**, locally and PostgreSQL CI |
+| Frontend unit tests | **13 passed**, three files |
+| Browser regression | **8 passed**, Linux Playwright CI |
+| Optional live-provider suite, separate | **11 passed**, nine fixture cases deselected in that invocation |
+| Workday live checks, separate | Ten full snapshots, ten repeat checks; six production source imports |
+| Lint/format/types | Ruff, Ruff format, ESLint, Prettier and TypeScript passed |
+| Production frontend build | Passed locally, in CI and on Vercel |
+| Alembic | SQLite upgrade/downgrade fixtures, PostgreSQL CI upgrade/check and production upgrade/audit passed |
+
+Three existing warnings remain: Starlette/httpx deprecation and two SQLite
+expression-index reflection warnings. Local Windows Playwright could not launch;
+Linux CI passed and the actual production browser was tested independently.
+
+Public smoke covered homepage, jobs API, search, filters, details, original apply
+link, metadata, sources, provider health, ingestion history and saved-search
+save/load/delete. A real Workday application page loaded; no application was
+submitted. Desktop and 390-pixel layouts had no horizontal overflow. Browser
+warning/error logs were empty. Cloud writes were confirmed by subsequent database
+audit; saved searches and application tracking write only to browser storage.
+
+## Performance
+
+Three unauthenticated requests per route after expansion, against 16,581 stored
+rows. Medians include network/serverless behavior, not a concurrency load test.
+
+| Request | Median milliseconds |
+| --- | ---: |
+| Default dashboard jobs including seven-day freshness | 102.7 |
+| Text search (`software`) | 146.6 |
+| Skill filter (`python`) | 119.3 |
+| Freshness | 90.4 |
+| Provider filter (`greenhouse`) | 102.1 |
+| Homepage HTTP response | 59.6 |
+
+First health request: 2,154.3 ms; later requests around 80 ms. Browser navigation to
+populated results was approximately six seconds including automation overhead,
+not a Web Vitals measurement. Individual source-ID filtering is not exposed;
+the measured source selection is the supported provider filter. Existing SQL
+search/PostgreSQL were sufficient at measured scale; no external search added.
+
+## Security review
+
+No findings in **198 publication files, 248 Git-history text objects and 26 built
+JavaScript bundles** scanned for known local secrets and credential patterns.
+This bounded scan is not proof against every possible secret format. `.env`, local
+databases/backups, credentials, deployment state, personal interview documents and
+reviewer/evaluation files are excluded from Git and uploads. No secrets printed or
+committed.
+
+Production source creation/update and source/full sync mutations returned **403**.
+Public admin pages expose read-only aggregate health/history. Canonical CORS
+preflight succeeded; unexpected origins and localhost were rejected. Invalid
+pagination/query length/provider/score inputs returned **422**. SQL parameters are
+bound and job text is escaped. Federal ingestion succeeded using Actions secrets;
+database/federal credentials are absent from frontend configuration. No anti-bot
+bypass or LinkedIn/Indeed scraping was implemented.
+
+## Known limitations and optional future work
+
+Workday support covers observed public CXS tenant sites, not every custom domain
+or restricted portal. Description-only changes may lag the six-hour cache.
+Date-only fields use UTC midnight rather than invented exact times. Salary parsing
+is conservative and supports explicit USD ranges; missing metadata stays unknown.
+Frozen rules may miss unusual federal supervisory wording or “3 or more years”;
+employer requirements always need review. New-provider holdout labels are pending.
+
+Saved searches/tracking remain local to one browser; cross-device sync and
+email/push are not implemented. Production admin mutations are intentionally
+disabled. GitHub scheduling has no strict freshness SLA; cancelled worker history
+may need operational review after lease expiry. These are documented limitations,
+not extra required phases.
+
+Optional: human holdout review, broader verified employer coverage, additional
+metadata adapters, cross-device accounts and email alerts.
+
+## Concrete completion blocker
+
+Observe GitHub → Actions → Scheduled employer ingestion with event `schedule`,
+then inspect its artifact and production `/api/ingestion` update. Workflow and
+secrets are configured; no credential entry is currently needed. A partial result
+caused by malformed source data must remain visibly partial.
+
+**GradJobs MVP is not yet complete.** Automatic timer delivery remains unverified.
