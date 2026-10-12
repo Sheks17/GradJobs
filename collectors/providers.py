@@ -1,0 +1,27 @@
+from collectors.ashby import AshbyCollector
+from collectors.greenhouse import GreenhouseCollector
+from collectors.lever import LeverCollector
+from collectors.smartrecruiters import SmartRecruitersCollector
+from collectors.usajobs import USAJobsCollector
+
+PROVIDERS = {"greenhouse": GreenhouseCollector, "lever": LeverCollector, "ashby": AshbyCollector}
+PROVIDERS.update(smartrecruiters=SmartRecruitersCollector, usajobs=USAJobsCollector)
+GreenhouseCollector.capabilities = {**GreenhouseCollector.capabilities, "posted_date": False}
+LeverCollector.capabilities = {
+    **LeverCollector.capabilities,
+    "pagination": True,
+    "salary": True,
+    "posted_date": True,
+}
+AshbyCollector.capabilities = {**AshbyCollector.capabilities, "salary": True, "posted_date": True}
+CAREERS = {
+    "greenhouse": "https://boards.greenhouse.io/{board}",
+    "lever": "https://jobs.lever.co/{board}",
+    "ashby": "https://jobs.ashbyhq.com/{board}",
+    "smartrecruiters": "https://careers.smartrecruiters.com/{board}",
+    "usajobs": "https://www.usajobs.gov/",
+}
+
+
+def make_collector(provider, board, company, config=None, **kwargs):
+    return PROVIDERS[provider](board, company, config=config or {}, **kwargs)

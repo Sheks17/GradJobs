@@ -1,0 +1,224 @@
+{
+  "listing": {
+    "id": "744000154699929",
+    "name": "Business Analyst ",
+    "uuid": "125d65b7-e817-494a-8e04-9039a3a8a088",
+    "jobAdId": "05802d0e-3b15-4516-b88a-3fcfde961045",
+    "defaultJobAd": true,
+    "refNumber": "REF15604W",
+    "company": {
+      "identifier": "SopraSteria1",
+      "name": "Sopra Steria"
+    },
+    "releasedDate": "2026-10-09T14:33:47.549Z",
+    "location": {
+      "city": "Kinston",
+      "region": "NC",
+      "country": "us",
+      "address": "Jetport Road",
+      "postalCode": "28504",
+      "remote": false,
+      "hybrid": true,
+      "hybridDescription": "onsite required minimum 3 days/week",
+      "latitude": "35.3216852",
+      "longitude": "-77.6079756",
+      "fullLocation": "Kinston, NC, United States"
+    },
+    "industry": {
+      "id": "it_and_services",
+      "label": "Information Technology And Services"
+    },
+    "department": {
+      "id": "5300828",
+      "label": "Consulting"
+    },
+    "function": {
+      "id": "information_technology",
+      "label": "Information Technology"
+    },
+    "typeOfEmployment": {
+      "id": "permanent",
+      "label": "Full-time"
+    },
+    "experienceLevel": {
+      "id": "mid_senior_level",
+      "label": "Mid-Senior Level"
+    },
+    "customField": [
+      {
+        "fieldId": "632c5097a7443e41fb446e2d",
+        "fieldLabel": "Brands",
+        "valueId": "default",
+        "valueLabel": "Sopra Steria"
+      },
+      {
+        "fieldId": "632c5097a7443e41fb446e2e",
+        "fieldLabel": "Department",
+        "valueId": "5300828",
+        "valueLabel": "Consulting"
+      },
+      {
+        "fieldId": "6419e10d65322a00cb96743b",
+        "fieldLabel": "Total Experience Expected",
+        "valueId": "4435b201-b999-426f-a491-692fb88b64d7",
+        "valueLabel": "6 to 10 years"
+      },
+      {
+        "fieldId": "6419e19b65322a00cb96743c",
+        "fieldLabel": "Type of Contract",
+        "valueId": "922921b7-f2cd-4ced-a6b0-3e918869beb7",
+        "valueLabel": "Permanent"
+      },
+      {
+        "fieldId": "6419e14b825d686b7de49aa3",
+        "fieldLabel": "Nature of Contract",
+        "valueId": "STANDA",
+        "valueLabel": "Standard"
+      },
+      {
+        "fieldId": "6419e336713efd6bc56d1660",
+        "fieldLabel": "Business Sector",
+        "valueId": "45f055fa-67c2-4a0d-8194-706e0739de8d",
+        "valueLabel": "Aeroline"
+      },
+      {
+        "fieldId": "COUNTRY",
+        "fieldLabel": "Country/Region",
+        "valueId": "us",
+        "valueLabel": "United States"
+      }
+    ],
+    "visibility": "PUBLIC",
+    "ref": "https://api.smartrecruiters.com/v1/companies/SopraSteria1/postings/744000154699929",
+    "language": {
+      "code": "en",
+      "label": "English",
+      "labelNative": "English (US)"
+    }
+  },
+  "detail": {
+    "id": "744000154699929",
+    "name": "Business Analyst ",
+    "uuid": "125d65b7-e817-494a-8e04-9039a3a8a088",
+    "jobId": "0f25111f-d418-4864-b130-5e379febc6ee",
+    "jobAdId": "05802d0e-3b15-4516-b88a-3fcfde961045",
+    "defaultJobAd": true,
+    "refNumber": "REF15604W",
+    "company": {
+      "name": "Sopra Steria",
+      "identifier": "SopraSteria1"
+    },
+    "location": {
+      "city": "Kinston",
+      "region": "NC",
+      "country": "us",
+      "address": "Jetport Road",
+      "postalCode": "28504",
+      "remote": false,
+      "hybrid": true,
+      "hybridDescription": "onsite required minimum 3 days/week",
+      "latitude": "35.3216852",
+      "longitude": "-77.6079756",
+      "fullLocation": "Kinston, NC, United States"
+    },
+    "customField": [
+      {
+        "fieldId": "6419e19b65322a00cb96743c",
+        "fieldLabel": "Type of Contract",
+        "valueId": "922921b7-f2cd-4ced-a6b0-3e918869beb7",
+        "valueLabel": "Permanent"
+      },
+      {
+        "fieldId": "6419e14b825d686b7de49aa3",
+        "fieldLabel": "Nature of Contract",
+        "valueId": "STANDA",
+        "valueLabel": "Standard"
+      },
+      {
+        "fieldId": "6419e336713efd6bc56d1660",
+        "fieldLabel": "Business Sector",
+        "valueId": "45f055fa-67c2-4a0d-8194-706e0739de8d",
+        "valueLabel": "Aeroline"
+      },
+      {
+        "fieldId": "COUNTRY",
+        "fieldLabel": "Country/Region",
+        "valueId": "us",
+        "valueLabel": "United States"
+      },
+      {
+        "fieldId": "632c5097a7443e41fb446e2d",
+        "fieldLabel": "Brands",
+        "valueId": "default",
+        "valueLabel": "Sopra Steria"
+      },
+      {
+        "fieldId": "632c5097a7443e41fb446e2e",
+        "fieldLabel": "Department",
+        "valueId": "5300828",
+        "valueLabel": "Consulting"
+      },
+      {
+        "fieldId": "6419e10d65322a00cb96743b",
+        "fieldLabel": "Total Experience Expected",
+        "valueId": "4435b201-b999-426f-a491-692fb88b64d7",
+        "valueLabel": "6 to 10 years"
+      }
+    ],
+    "releasedDate": "2026-10-09T14:33:47.549Z",
+    "creator": {
+      "name": "",
+      "avatarUrl": ""
+    },
+    "postingUrl": "https://jobs.smartrecruiters.com/SopraSteria1/744000154699929-business-analyst-",
+    "applyUrl": "https://jobs.smartrecruiters.com/SopraSteria1/744000154699929-business-analyst-?oga=true",
+    "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/SopraSteria1/publication/125d65b7-e817-494a-8e04-9039a3a8a088?dcr_ci=SopraSteria1",
+    "jobAd": {
+      "sections": {
+        "companyDescription": {
+          "title": "Company Description",
+          "text": "<p>Sopra Steria is a European leader in consulting, digital services, and software development, supporting its clients in their digital transformation through innovative and collaborative solutions. With 50,000 employees in nearly 30 countries and a revenue of \u20ac5.1 billion in 2022, we are committed to achieving sustainable results and placing people at the heart of technology.&#xa0;<strong>The world is how we shape it.&#xa0;</strong>For more information, visit us at <a href=\"http://www.soprasteria.com\" rel=\"noopener noreferrer\">www.soprasteria.com</a>.</p><p><em>Are you ready to take on the challenge with us?</em></p><p>Join<strong> Sopra Steria Aeroline</strong> and become part of a forward-thinking team shaping the future of aerospace through digital innovation. If you are passionate about managing business accounts, aerospace technologies, and want to make a meaningful impact, we want to meet you! Apply now to embark on an exciting career with us.</p>"
+        },
+        "jobDescription": {
+          "title": "Job Description",
+          "text": "<p>We are looking for a Business Analyst to join our dynamic team. You will take on the Business Analyst role within an Agile team for the development of specific shopfloor/Manufacturing applications in the aerospace sector. You will collaborate closely with cross-functional and international teams to ensure the successful delivery of projects within scope, timeline, and budget, while maintaining the highest standards of quality and compliance.</p><p><strong>Key Responsibilities</strong></p><ul><li>Business needs analysis and workshop facilitation</li><li>Ability to discuss with shopfloor people to understand specific requirements</li><li>Definition and scoping of user needs and User Stories</li><li>Writing functional specifications and consolidating existing functional specifications</li><li>Writing test plans and participating in IT test execution</li><li>Support for business testing</li><li>Participation in continuous improvement</li><li>Quality control of deliverables and their level of quality</li></ul>"
+        },
+        "qualifications": {
+          "title": "Qualifications",
+          "text": "<ul><li>Experience as a Business Analyst within a software development team</li><li>Experience as a Business Analyst within shopfloor/Manufacturing applications</li><li>Experience with Agile management tools (Jira) and AzureDevOps</li><li>Bachelor\u2019s degree in industrial, mechanical, aeronautical, computer science, or a related field</li><li>Excellent technical and functional understanding of manufacturing and assembly processes in the aeronautical sector</li><li>Strong adaptability skills, excellent interpersonal skills, and a genuine appreciation for teamwork</li><li>Strong organizational skills</li><li>Knowledge of digital technologies and their applications in the aerospace sector</li><li>Understanding of aerospace industry regulations, standards, and best practices</li></ul><p><strong>Languages</strong></p><ul><li>English</li><li>French is a plus</li></ul>"
+        },
+        "additionalInformation": {
+          "title": "Additional Information",
+          "text": "<p>At Sopra Steria, we believe in rewarding your talent and supporting your growth. Here\u2019s what you can expect:</p><p><strong>Competitive Compensation</strong></p><ul><li>Attractive salary</li><li>Annual performance bonus</li></ul><p><strong>Benefits That Matter</strong></p><ul><li>Health, dental, and vision coverage</li><li>Life and long-term disability insurance</li><li>Optional add-ons: Accidental, Telemedicine, and Critical Illness coverage</li></ul><p><strong>Time for You</strong></p><ul><li>3 weeks of vacation</li><li>Sick leave and personal days</li></ul><p><strong>Perks &amp; Flexibility</strong></p><ul><li>Monthly transportation allowance</li><li>Hybrid work environment</li><li>All the equipment you need to succeed</li></ul><p><strong>Grow With Us</strong></p><ul><li>World-class training and development</li><li>Clear paths for career advancement</li><li>A caring, collaborative, and inclusive culture</li></ul><p><strong>Certified Excellence</strong><br>\nWe\u2019re proud to be recognized as a <strong>\u201cGreat Place to Work\"</strong></p><p><em><em><em>We thank all applicants for showing an interest in this position.&#xa0;</em>Please note that only shortlisted candidates will be contacted for further steps in the selection process.</em></em></p><p><em><em><em>Sopra Steria is an equal opportunity employer, committed to fostering a diverse and inclusive workplace. Our company works everyday to combat all forms of discrimination and promote a respectful working environment. We encourage applications from all qualified individuals, including women, visible minorities, Indigenous people, and people with disabilities. Accommodations are available on request for candidates taking part in all aspects of the selection process.</em></em></em></p>"
+        }
+      }
+    },
+    "active": true,
+    "visibility": "PUBLIC",
+    "industry": {
+      "id": "it_and_services",
+      "label": "Information Technology And Services"
+    },
+    "function": {
+      "id": "information_technology",
+      "label": "Information Technology"
+    },
+    "department": {
+      "id": 5300828,
+      "label": "Consulting"
+    },
+    "experienceLevel": {
+      "id": "mid_senior_level",
+      "label": "Mid-Senior Level"
+    },
+    "typeOfEmployment": {
+      "id": "permanent",
+      "label": "Full-time"
+    },
+    "language": {
+      "code": "en",
+      "label": "English",
+      "labelNative": "English (US)"
+    }
+  }
+}

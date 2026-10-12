@@ -1,0 +1,183 @@
+{
+  "MatchedObjectId": "883691200",
+  "MatchedObjectDescriptor": {
+    "PositionID": "F2-2026-0006",
+    "PositionTitle": "Al Software Engineer ",
+    "PositionURI": "https://www.usajobs.gov:443/job/883691200",
+    "ApplyURI": [
+      "https://www.usajobs.gov:443/job/883691200"
+    ],
+    "PositionLocationDisplay": "Multiple Locations",
+    "PositionLocation": [
+      {
+        "LocationName": "San Francisco, California",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "California",
+        "CityName": "San Francisco, California",
+        "Longitude": -122.4196,
+        "Latitude": 37.7771
+      },
+      {
+        "LocationName": "Lakewood, Colorado",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "Colorado",
+        "CityName": "Lakewood, Colorado",
+        "Longitude": -105.08274,
+        "Latitude": 39.71095
+      },
+      {
+        "LocationName": "Washington, District of Columbia",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "District of Columbia",
+        "CityName": "Washington, District of Columbia",
+        "Longitude": -77.032,
+        "Latitude": 38.8904
+      },
+      {
+        "LocationName": "Chicago, Illinois",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "Illinois",
+        "CityName": "Chicago, Illinois",
+        "Longitude": -87.63241,
+        "Latitude": 41.88415
+      },
+      {
+        "LocationName": "Boston, Massachusetts",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "Massachusetts",
+        "CityName": "Boston, Massachusetts",
+        "Longitude": -71.0567,
+        "Latitude": 42.358635
+      },
+      {
+        "LocationName": "New York, New York",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "New York",
+        "CityName": "New York, New York",
+        "Longitude": -74.0071,
+        "Latitude": 40.7146
+      },
+      {
+        "LocationName": "Philadelphia, Pennsylvania",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "Pennsylvania",
+        "CityName": "Philadelphia, Pennsylvania",
+        "Longitude": -75.16237,
+        "Latitude": 39.95227
+      },
+      {
+        "LocationName": "Tacoma, Washington",
+        "CountryCode": "United States",
+        "CountrySubDivisionCode": "Washington",
+        "CityName": "Tacoma, Washington",
+        "Longitude": -122.44166,
+        "Latitude": 47.255165
+      }
+    ],
+    "OrganizationName": "Technology Transformation Service",
+    "DepartmentName": "General Services Administration",
+    "JobCategory": [
+      {
+        "Name": "Information Technology Management",
+        "Code": "2210"
+      }
+    ],
+    "JobGrade": [
+      {
+        "Code": "GS"
+      }
+    ],
+    "PositionSchedule": [
+      {
+        "Name": "",
+        "Code": "1"
+      }
+    ],
+    "PositionOfferingType": [
+      {
+        "Name": "",
+        "Code": "15317"
+      }
+    ],
+    "QualificationSummary": "To evaluate your qualifications, your resume must clearly demonstrate how you meet the specialized experience described below. Your resume must not exceed two pages. To ensure your qualifications can be fully evaluated, we recommend including the following information: Name, address, telephone number, email address; Job Title (if Federal Service, provide series and grade; if not in GS plan, provide GS equivalent grade); Relevant work experience\u2014should include employer name, job title, start and end dates (month/year), the number of hours worked per week and descriptions that explain how you meet the required qualifications in the job announcement. Education, certifications or licensures\u2014If the job announcement requires any education, certifications or licensures, make sure to include the required information and any required documents like transcripts. Your resume should contain enough information to make a valid determination that you fully meet experience requirements for each grade level you are applying to. If you do not provide enough information for us to determine your qualifications, you may be rated ineligible If you have volunteered your service through a National Service program (e.g., Peace Corps, Americorps), we encourage you to apply and include this experience on your resume. The GS-13 salary range starts at $117,284 per year. If you are a new federal employee, your starting salary will likely be set at the Step 1 of the grade for which you are selected. To qualify, you must have at least one year of specialized experience equivalent to the GS-12 level or higher in the Federal service. Applicants applying for the GS-13 grade level must meet the following requirements: Have IT-related experience demonstrating EACH of the nine competencies AND one year of specialized experience equivalent to the GS-12 level in the Federal service as described below: Attention to Detail - Is thorough when performing work and conscientious about attending to detail. Customer Service - Works with clients and customers (that is, any individuals who use or receive the services or products that your work unit produces, including the general public, individuals who work in the agency, other agencies, or organizations outside the Government) to assess their needs, provide information or assistance, resolve their problems, or satisfy their expectations; knows about available products and services; is committed to providing quality products and services. Decision Making - Makes sound, well-informed, and objective decisions; perceives the impact and implications of decisions; commits to action, even in uncertain situations, to accomplish organizational goals; causes change. Information Management - Identifies a need for and knows where or how to gather information; organizes and maintains information or information management systems. Interpersonal Skills - Shows understanding, friendliness, courtesy, tact, empathy, concern, and politeness to others; develops and maintains effective relationships with others; may include effectively dealing with individuals who are difficult, hostile, or distressed; relates well to people from varied backgrounds and different situations. Oral Communication - This skill is generally demonstrated by assignments where the applicant persuades others to take a particular course of action or to accept findings, recommendations, changes, or alternative viewpoints. Problem Solving - This skill is generally demonstrated by assignments where the applicant identifies and accommodates technology and resource constraints. Teamwork - Encourages and facilitates cooperation, pride, trust, and group identity; fosters commitment and team spirit; works with others to achieve goals. Technical Competence \u2013 Uses knowledge that is acquired through formal training or on-the-job experience to perform one's job; works with, understands, and evaluates technical information related to the job; advises others on technical issues. To qualify, you must have one (1) year of specialized experience. Specialized experience is defined as ALL of the following: Contributing to an agile team in developing, testing, debugging, and maintaining digital products and services for public-facing or enterprise environments, including data engineering, cloud-native architectures, computer hardware/software integration, cybersecurity-by-design, performance requirements, interoperability, and/or secure deployment of emerging technologies. This includes applying modern programming languages, frameworks, and technologies (e.g., Python, Go, JavaScript, TypeScript, Node.js, React, Ruby on Rails, Terraform, Next.js, HTML/CSS, Rust). Contributing to the end-to-end design, development, and deployment of digital products, systems and solutions by integrating emergent technologies and industry best practices. Applying information security and privacy best practices and performing risk assessments in artificial intelligence or cloud environments",
+    "PositionRemuneration": [
+      {
+        "MinimumRange": "117284",
+        "MaximumRange": "172980",
+        "RateIntervalCode": "PA",
+        "Description": "Per Year"
+      }
+    ],
+    "PositionStartDate": "2026-09-04T00:00:00.0000",
+    "PositionEndDate": "2026-12-31T23:59:59.9970",
+    "PublicationStartDate": "2026-09-04T00:00:00.0000",
+    "ApplicationCloseDate": "2026-12-31T23:59:59.9970",
+    "PositionFormattedDescription": [
+      {
+        "Label": "Dynamic Teaser",
+        "LabelDescription": "Hit highlighting for keyword searches."
+      }
+    ],
+    "UserArea": {
+      "Details": {
+        "JobSummary": "As an Al Software Engineer you will establish technical strategies, standards, and architectures to drive secure, ethical, and engineering-sound AI adoption across the federal government. This position is with the Office of Technology Transformation Services (TTS), Federal Acquisition Service (FAS), General Services Administration (GSA). We are currently filling multiple vacancies, but additional vacancies may be filled as needed.",
+        "WhoMayApply": {
+          "Name": "",
+          "Code": ""
+        },
+        "LowGrade": "13",
+        "HighGrade": "13",
+        "PromotionPotential": "13",
+        "OrganizationCodes": "GS/GS18",
+        "Relocation": "False",
+        "HiringPath": [
+          "public"
+        ],
+        "HiringPathDisplay": [
+          "Open to the public"
+        ],
+        "MCOTags": [
+          "AI"
+        ],
+        "TotalOpenings": "Many",
+        "AgencyMarketingStatement": "",
+        "TravelCode": "1",
+        "ApplyOnlineUrl": "https://jobs.monstergovt.com/gsa/ros/rosDashboard.hms?O=1&J=112834",
+        "DetailStatusUrl": "https://jobs.monstergovt.com/gsa/ros/rosDashboard.hms?O=1&J=112834&S=1",
+        "MajorDuties": [
+          "Serves as a principal technical expert formulating and directing high level, enterprise-wide engineering strategies for Al-enabled systems, computer hardware/software integration, and cloud-native architectures and platforms, delivering impactful solutions for the American people. Provides technical guidance for the development and management of Al-enabled systems, computer hardware/software integration, and cloud-native architectures, ensuring compliance with federal mandates, executive orders, and/or other guidelines. Serves as a strategic authority on Al, data strategy and emerging technologies in collaboration with stakeholders and partners. Provides authoritative consultation and technical guidance to agency personnel, shaping national and international Al, computer engineering and digital policies, directives and mandates. Provides expert IT advice to generate and develop new guidance and direction related to efficiency and effectiveness of mission-critical programs and technology solutions and services within customer agencies. Formulates implementation strategies and policies for agency and governmentwide application. The Technology Transformation Services (TTS) is responsible for providing scalable software products and services to federal agencies."
+        ],
+        "Education": "",
+        "Requirements": "If selected, you must meet the following conditions: Current or Former Political Appointees: The Office of Personnel Management (OPM) must authorize employment offers made to current or former political appointees. If you are currently, or have been within the last 5 years, a political Schedule A, Schedule C or Non\u00adCareer SES employee in the Executive Branch, you must disclose this information to the HR Office. Failure to disclose this information could result in disciplinary action including removal from Federal Service. Position security requirements are dependent on the position for which selected, and may be designated at Top Secret, Secret, High Risk, Moderate Risk or Low Risk. Dependent on which position you are selected for you will be required to undergo and pass the appropriate Tier background investigation level. You must be granted this clearance before you can start the job. Have your identity and work status eligibility verified if you are not a GSA employee. We will use the Department of Homeland Security's e-Verify system for this. Any discrepancies must be resolved as a condition of continued employment. Any applicant tentatively selected for this position will be required to submit to urinalysis to screen for illegal drug use prior to appointment. Appointment to the position will be contingent upon a negative drug test result. Some positions may require to perform on-call duty outside typical schedule duty hours as needed and directed to respond to and resolve issues related to fraud, platform, engineering, partnership, and/or other comparable issues. Serve a one year probationary period, if required.",
+        "Evaluations": "Your application will be evaluated against the basic qualifications which includes any specialized experience and/or education requirements (if applicable). Qualified candidates will be considered in accordance with the Office of Personnel Management Direct Hire Guidelines. Applications will not be rated or ranked. Veterans' Preference is not applicable to the direct hire recruitment procedures. Failure to submit a complete application or missing required supporting documentation may result in you not being considered for the position. Falsification of your background, education, and/or experience is grounds for non-selection or dismissal if hired. Technical Assessment: Shortly after the job posting closes, eligible applicants will receive an email with a link to a technical assessment to complete. Responses to the assessment will be used to measure the depth of knowledge in relation to the required competencies for the position. Candidates who pass the assessment will move to the next phase. Subject Matter Experts (SMEs) Resume Review: Subject Matter Experts (SMEs) will review your resume to determine your technical qualifications for this position based on the required competencies, including the required IT competencies and the specialized experience on a pass/fail process. ICTAP/CTAP Candidates: The Interagency Career Transition Assistance Plan (ICTAP) and Career Transition Assistance Plan (CTAP) provide eligible displaced Federal competitive service employees with selection priority over other candidates for competitive service vacancies. To be qualified you must submit appropriate documentation (a copy of the agency notice, your most recent performance rating, and your most recent SF-50 noting current position, grade level, and duty location) and be found \u201cwell-qualified\" for this vacancy. In addition to meeting the basic qualifications stated in the qualification section of this announcement, well qualified is defined as: experience that exceeds the minimum qualifications of the position, demonstrated by meeting at least 3 out of 5 KSA's listed below: Ability to establish and communicate technical standards, Al engineering policies, and architectures for the ethical, secure, and trustworthy use of Al and emerging technologies. Ability to apply IT specialty interrelationships, agency IT architecture, emerging technologies, new IT developments, business process applications, and IT security concepts, standards, and methods. Ability to make recommendations and provide input for major decisions that may significantly influence important agency IT policies or programs. Ability to provide expert technical advice, guidance, and recommendations to management and other technical specialists on critical IT issues. Ability to apply advanced IT principles, concepts, methods, standards, and practices sufficient to accomplish assignments such as: develop and interpret policies, procedures, and strategies governing the planning and delivery of services throughout the agency. Demonstration of these KSA's must be supported by your resume. You may preview questions for this vacancy.",
+        "HowToApply": "Submit a complete online application including any required documents prior to 11:59 pm Eastern Time on the closing date of the announcement. You can modify or complete your application any time before the deadline. Simply return to USAJOBS, select the vacancy, and update your application. For more detailed instructions on how to apply, click here: Apply for a GSA Job. If you are having issues applying to this announcement, you should switch to a different browser, network or device. Note: Your firewall may block your transfer from USAJOBS to your GSA application. To begin, click the Apply Online button on the vacancy announcement. Sign in or register on USAJobs and select a resume and documents to include in your application. Resumes exceeding two pages will not be accepted by USAJOBS and will prevent your application from moving forward in the hiring process. Please see Required Documents for additional details. Once you have clicked Apply for this position now, you will be taken to the GSA site to complete the application process. Click the Apply To This Vacancy and complete all steps in the application process until the Confirmation indicates your application is complete. If you click Return to USAJobs or get timed out prior to receiving confirmation, your application will not be submitted and cannot be considered for this job. Note: Review the REQUIRED DOCUMENTS section of this announcement to determine which apply to you and must be submitted online. You may choose one or more of the following options to submit your document(s): Upload (from your computer) or USAJOBS (click the \"USAJOBS\" link to complete the transfer process). Need Assistance? Questions or issues completing an application and/or submitting documentation - contact fedhirehelp@applygovernment.com or 1-866-656-6831 Monday-Friday 7AM - 7PM EST, except for Federal holidays Specific questions on the position - contact the HR representative (Monday-Friday during normal business hours) listed on the announcement, prior to the application deadline You must receive HR approval before deviating from these instructions. Be sure to APPLY EARLY as most assessments must be completed fully and submitted before the announcement closing. Standing Register As mentioned in the Other Information section, this announcement will be used to fill positions on an ongoing basis as job openings occur. Your application will only be reviewed after a cut-off date or after the vacancy closing date if you have completed the application process described above.",
+        "WhatToExpectNext": "STANDING REGISTER The following process is used if your application is complete and active as of the cut-off date deadline. TECHNICAL ASSESSMENT: You will receive an email with instructions to complete a technical assessment. ELIGIBILITY/QUALIFICATIONS: Your application will be reviewed for all requirements. REFERRAL TO MANAGEMENT: If you meet all the requirements, you may be referred to management for review and a possible interview. SELECTION/TENTATIVE JOB OFFER: If you are selected, you will receive a tentative offer and start the suitability and/or security background investigation process. FINAL JOB OFFER:Once our security office determines you can come on board, you will be given a final offer, which is typically 40 days after the announcement closes Thank you for your interest in working for the U.S. General Services Administration!",
+        "RequiredDocuments": "ALL required documents must be submitted before the closing date. Review the following list to determine what you need to submit. Resume: Must not exceed two pages. Refer to the Qualifications section for resume requirements. If you are ICTAP/CTAP eligible - submit a, b, and c: (a) proof of eligibility including agency notice; (b) SF-50, and (c) most recent performance appraisal. Current or Former Political Appointees: Submit SF-50.",
+        "Benefits": "You will have access to many benefits including: Health insurance (choose from a wide range of plans) Life insurance coverage with several options Sick leave and vacation time, including 11 paid holidays per year Thrift Savings Plan (similar to a 401(k) plan) Transit and child care subsidies Flexible spending accounts Long-term care insurance Training and development",
+        "BenefitsDisplayDefaultText": true,
+        "OtherInformation": "EEO Statement Candidates will not be hired based on their race, sex, color, religion, or national origin. Resume Mining/Searchable Resume Applicants are encouraged to make their resume searchable in their USAJOBS.gov profile. This will allow Federal hiring specialists and hiring managers across agencies to find their resume as part of agency recruitment campaigns or staffing searches. Criminal History Inquiries - Not allowed before offer If you apply to this position and are selected, we will not ask about your criminal history before you receive a conditional job offer. If you believe you were asked about your criminal history improperly, contact the agency or visit GSA's webpage. Relocation Not Paid Relocation-related expenses are not approved and will be your responsibility. Recruitment/Relocation Incentive On a case-by-case basis, the following incentives may be approved: \u00b7 Recruitment incentive if you are new to the federal government \u00b7 Relocation incentive if you are a current federal employee \u00b7 Credit toward vacation leave if you are new to the federal government Management Rights Additional vacancies may be filled through this announcement in this or other GSA organizations within the same commuting area as needed; through other means; or not at all. Standing Register Announcement This announcement will be used to fill positions on an ongoing-basis as job openings occur. Eligible applicants who have submitted a complete application by the initial cut-off date, will be considered first. If additional vacancies exist, remaining applicants will be considered as needed. The initial cut-off date for referral of eligible applications will be 09/11/2026. Thereafter, the cut-off for applications received will be every 7 days on Friday unless a Holiday occurs until the job opportunity announcement closes on 12/31/2026.",
+        "KeyRequirements": [
+          "US Citizenship or National (Residents of American Samoa and Swains Island)",
+          "Meet all eligibility requirements within 30 days of the closing date.",
+          "Register with Selective Service if you are a male born after 12/31/1959"
+        ],
+        "WithinArea": "False",
+        "CommuteDistance": "0",
+        "ServiceType": "01",
+        "AnnouncementClosingType": "01",
+        "AgencyContactEmail": "crcavacancyinquiries@gsa.gov",
+        "AgencyContactPhone": "000-000-0000",
+        "SecurityClearance": "Other",
+        "DrugTestRequired": "True",
+        "AdjudicationType": [],
+        "TeleworkEligible": true,
+        "RemoteIndicator": false,
+        "FinancialDisclosure": false,
+        "BargainingUnitStatus": false
+      },
+      "IsRadialSearch": false
+    },
+    "AnnouncementClosingType": "01"
+  },
+  "RelevanceRank": 0
+}

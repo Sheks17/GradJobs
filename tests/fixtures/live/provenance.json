@@ -1,0 +1,65 @@
+[
+  {
+    "provider": "greenhouse",
+    "board": "stripe",
+    "endpoint": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "greenhouse",
+    "board": "cloudflare",
+    "endpoint": "https://boards-api.greenhouse.io/v1/boards/cloudflare/jobs",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "greenhouse",
+    "board": "datadog",
+    "endpoint": "https://boards-api.greenhouse.io/v1/boards/datadog/jobs",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "lever",
+    "board": "palantir",
+    "endpoint": "https://api.lever.co/v0/postings/palantir",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "lever",
+    "board": "spotify",
+    "endpoint": "https://api.lever.co/v0/postings/spotify",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "lever",
+    "board": "veeva",
+    "endpoint": "https://api.lever.co/v0/postings/veeva",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "ashby",
+    "board": "notion",
+    "endpoint": "https://api.ashbyhq.com/posting-api/job-board/notion",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "ashby",
+    "board": "ramp",
+    "endpoint": "https://api.ashbyhq.com/posting-api/job-board/ramp",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  },
+  {
+    "provider": "ashby",
+    "board": "linear",
+    "endpoint": "https://api.ashbyhq.com/posting-api/job-board/linear",
+    "captured_at": "2026-10-08",
+    "note": "Single public posting from the verified snapshot; test example, not production logic."
+  }
+]

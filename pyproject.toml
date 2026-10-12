@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gradjobs"
+version = "0.1.0"
+description = "Transparent early-career job discovery"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.34,<1",
+  "sqlalchemy>=2.0.38,<3", "alembic>=1.14,<2",
+  "psycopg[binary]>=3.2.5,<4", "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3", "httpx>=0.28,<1",
+  "beautifulsoup4>=4.13,<5", "python-json-logger>=3.2,<5",
+  "pyyaml>=6,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10", "ruff>=0.11,<1"]
+
+[tool.setuptools.packages.find]
+include = ["services*", "collectors*", "matching*", "shared*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "services/api/tests"]
+pythonpath = ["."]
+markers = ["live: optional tests against public provider endpoints"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"services/api/app/api/*.py" = ["B008"]

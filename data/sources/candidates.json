@@ -1,0 +1,101 @@
+[
+  {
+    "company": "Bosch Group",
+    "careers_url": "https://careers.smartrecruiters.com/BoschGroup",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "BoschGroup",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Sopra Steria",
+    "careers_url": "https://careers.smartrecruiters.com/SopraSteria1",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "SopraSteria1",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "ServiceNow",
+    "careers_url": "https://careers.smartrecruiters.com/ServiceNow",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "ServiceNow",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Western Digital",
+    "careers_url": "https://careers.smartrecruiters.com/WesternDigital",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "WesternDigital",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Nagarro",
+    "careers_url": "https://careers.smartrecruiters.com/Nagarro1",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "Nagarro1",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Federal technology searches",
+    "careers_url": "https://www.usajobs.gov/",
+    "detected_provider": "usajobs",
+    "provider_identifier": "technology",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Complete fetch and normalization passed; USAJOBS is a configured federal search source."
+  },
+  {
+    "company": "Airtable",
+    "careers_url": "https://boards.greenhouse.io/airtable",
+    "detected_provider": "greenhouse",
+    "provider_identifier": "airtable",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T22:48:57.309339+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Shield AI",
+    "careers_url": "https://jobs.lever.co/shieldai",
+    "detected_provider": "lever",
+    "provider_identifier": "shieldai",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T22:48:59.585795+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Replit",
+    "careers_url": "https://jobs.ashbyhq.com/replit",
+    "detected_provider": "ashby",
+    "provider_identifier": "replit",
+    "verification_status": "verified",
+    "last_checked": "2026-10-10T22:49:23.974834+00:00",
+    "notes": "Verified public ATS snapshot; controlled pilot."
+  },
+  {
+    "company": "Visa",
+    "careers_url": "https://careers.smartrecruiters.com/Visa",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "Visa",
+    "verification_status": "empty_not_enabled",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Public endpoint returned zero visible jobs. Not enabled; no usable snapshot verified."
+  },
+  {
+    "company": "PublicisGroupe",
+    "careers_url": "https://careers.smartrecruiters.com/PublicisGroupe",
+    "detected_provider": "smartrecruiters",
+    "provider_identifier": "PublicisGroupe",
+    "verification_status": "empty_not_enabled",
+    "last_checked": "2026-10-10T23:03:01.376657+00:00",
+    "notes": "Public endpoint returned zero visible jobs. Not enabled; no usable snapshot verified."
+  }
+]
