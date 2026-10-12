@@ -59,13 +59,20 @@ class Collector(ABC):
     def get_json(
         self, params: dict | None = None, *, url: str | None = None, headers: dict | None = None
     ) -> Any:
+        return self.request_json("GET", params=params, url=url, headers=headers)
+
+    def request_json(self, method, *, params=None, url=None, headers=None, json=None) -> Any:
         for attempt in range(4):
             self.sleep(get_settings().collector_request_interval)
             started = time.monotonic()
             self.request_count += 1
             try:
-                response = self.client.get(
-                    url or self.endpoint.format(board=self.board), params=params, headers=headers
+                response = self.client.request(
+                    method,
+                    url or self.endpoint.format(board=self.board),
+                    params=params,
+                    headers=headers,
+                    json=json,
                 )
                 self.request_latency_ms += int((time.monotonic() - started) * 1000)
                 self.rate_limit_responses += response.status_code == 429

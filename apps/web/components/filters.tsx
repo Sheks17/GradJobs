@@ -66,13 +66,18 @@ export function FiltersPanel({
             onChange={(e) => set("provider", e.target.value)}
           >
             <option value="">All providers</option>
-            {["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs"].map(
-              (provider) => (
-                <option key={provider} value={provider}>
-                  {provider}
-                </option>
-              ),
-            )}
+            {[
+              "greenhouse",
+              "lever",
+              "ashby",
+              "smartrecruiters",
+              "usajobs",
+              "workday",
+            ].map((provider) => (
+              <option key={provider} value={provider}>
+                {provider}
+              </option>
+            ))}
           </select>
         </label>
       </details>

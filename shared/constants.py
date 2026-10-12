@@ -4,7 +4,15 @@ from matching.aliases import ROLE_FAMILIES as ROLE_FAMILIES
 
 RemoteType = Literal["remote", "hybrid", "onsite", "unknown"]
 SourceType = Literal[
-    "greenhouse", "lever", "ashby", "smartrecruiters", "usajobs", "api", "custom", "manual"
+    "greenhouse",
+    "lever",
+    "ashby",
+    "smartrecruiters",
+    "usajobs",
+    "workday",
+    "api",
+    "custom",
+    "manual",
 ]
 Seniority = Literal[
     "internship",

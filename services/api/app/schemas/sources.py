@@ -2,7 +2,7 @@ import re
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
 from services.api.app.schemas.jobs import UtcDatetime
 
@@ -10,22 +10,49 @@ from services.api.app.schemas.jobs import UtcDatetime
 class SourceCreate(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
     company_name: str = Field(min_length=1, max_length=250)
-    provider: Literal["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs"]
+    provider: Literal["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs", "workday"]
     board_token: str = Field(pattern=r"^[A-Za-z0-9_-]{1,200}$")
     careers_url: str | None = None
     enabled: bool = True
     provider_config: dict = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def workday_required(self):
+        if self.provider == "workday":
+            from collectors.workday import source_token, workday_config
+
+            config = workday_config(self.provider_config.get("careers_url", ""))
+            if self.board_token != source_token(config):
+                raise ValueError("Workday board token must match observed hostname and site")
+        return self
 
     @field_validator("provider_config")
     @classmethod
     def public_configuration(cls, value):
         if value is None:
             return value
-        allowed = {"company_identifier", "country", "queries", "results_per_page", "max_pages"}
+        allowed = {
+            "company_identifier",
+            "country",
+            "queries",
+            "results_per_page",
+            "max_pages",
+            "hostname",
+            "tenant",
+            "site",
+            "locale",
+            "careers_url",
+        }
         if set(value) - allowed:
             raise ValueError(
                 "Unknown provider configuration keys; credentials belong in environment variables"
             )
+        if any(key in value for key in ("hostname", "tenant", "site", "locale", "careers_url")):
+            from collectors.workday import workday_config
+
+            observed = workday_config(value.get("careers_url", ""))
+            if any(value[key] != observed[key] for key in observed if key in value):
+                raise ValueError("Workday configuration conflicts with careers URL")
         if "max_pages" in value and not 1 <= int(value["max_pages"]) <= 100:
             raise ValueError("max_pages must be 1–100")
         if "results_per_page" in value and not 1 <= int(value["results_per_page"]) <= 500:

@@ -79,6 +79,7 @@ export interface JobPage {
   total_pages: number;
 }
 export interface Stats {
+  last_successful_sync?: string | null;
   active_jobs: number;
   discovered_today: number;
   discovered_this_week: number;

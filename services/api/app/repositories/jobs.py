@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from collectors.normalizers.location import normalize_state
 from matching.scoring import SENIOR_LEVELS
 from services.api.app.db.session import utcnow
-from services.api.app.models.job import Job, JobLocation, JobSkill
+from services.api.app.models.job import Job, JobLocation, JobSkill, JobSource
 from services.api.app.schemas.jobs import JobFilters, JobPage, Stats
 
 
@@ -209,6 +209,7 @@ def statistics(db: Session) -> Stats:
         ).where(*visible_conditions())
     ).one()
     return Stats(
+        last_successful_sync=db.scalar(select(func.max(JobSource.last_successful_sync))),
         active_jobs=row[0],
         discovered_today=row[1],
         discovered_this_week=row[2],

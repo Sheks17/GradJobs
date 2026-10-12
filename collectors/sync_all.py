@@ -18,7 +18,7 @@ from services.api.app.core.config import get_settings
 from services.api.app.core.logging import configure_logging
 from services.api.app.db.maintenance import refresh_sqlite_statistics
 from services.api.app.db.session import SessionLocal, utcnow
-from services.api.app.models.job import JobSource
+from services.api.app.models.job import IngestionRun, JobSource
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ def sync_one(source_id: UUID, dry_run=False) -> SyncResult:
             collector.close()
 
 
-def sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dict:
+def _sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dict:
     started = time.monotonic()
     with SessionLocal() as db:
         query = select(JobSource.id, JobSource.source_type)
@@ -181,7 +181,7 @@ def sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dict
         "sources_successful": sum(r["status"] in {"success", "dry_run"} for r in results),
         "sources_failed": sum(r["status"] == "failed" for r in results),
         "sources_partial": sum(r["status"] == "partial" for r in results),
-        "sources_skipped": sum(r["status"] in {"busy", "disabled"} for r in results),
+        "sources_skipped": sum(r["status"] in {"busy", "disabled", "cooldown"} for r in results),
         **{
             f"jobs_{key}": sum(r[key] for r in results)
             for key in (
@@ -203,9 +203,40 @@ def sync_all(provider=None, dry_run=False, limit=None, concurrency=None) -> dict
         "failed"
         if results and summary["sources_failed"] == len(results)
         else "partial"
-        if summary["sources_failed"] or summary["sources_partial"]
+        if summary["sources_failed"] or summary["sources_partial"] or summary["sources_skipped"]
         else "success"
     )
+    return summary
+
+
+def sync_all(provider=None, dry_run=False, limit=None, concurrency=None):
+    if dry_run:
+        return _sync_all(provider, dry_run, limit, concurrency)
+    with SessionLocal() as db:
+        run = IngestionRun(summary={"provider_filter": provider})
+        db.add(run)
+        db.commit()
+        identity = run.id
+    try:
+        summary = _sync_all(provider, dry_run, limit, concurrency)
+    except Exception as exc:
+        with SessionLocal() as db:
+            run = db.get(IngestionRun, identity)
+            run.status = "failed"
+            run.completed_at = utcnow()
+            run.summary = {"error_type": type(exc).__name__, "provider_filter": provider}
+            db.commit()
+        raise
+    with SessionLocal() as db:
+        run = db.get(IngestionRun, identity)
+        run.completed_at = utcnow()
+        run.status = summary["status"]
+        run.summary = {
+            **{k: v for k, v in summary.items() if k != "sources"},
+            "provider_filter": provider,
+        }
+        db.commit()
+    summary["run_id"] = str(identity)
     return summary
 
 
@@ -228,7 +259,7 @@ def main() -> None:
         "GradJobs Sync Complete\n"
         + json.dumps({k: v for k, v in summary.items() if k != "sources"}, indent=2)
     )
-    raise SystemExit(1 if summary["status"] == "failed" else 0)
+    raise SystemExit(1 if summary["status"] in {"failed", "partial"} else 0)
 
 
 if __name__ == "__main__":

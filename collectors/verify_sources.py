@@ -49,7 +49,8 @@ def verify_file(input_path: Path, output_path: Path, cache_dir: Path) -> None:
                     {
                         **candidate,
                         "enabled": True,
-                        "careers_url": CAREERS[provider].format(board=board),
+                        "careers_url": getattr(collector, "careers_url", None)
+                        or CAREERS[provider].format(board=board),
                         "verified_at": record["verified_at"],
                         "verification_url": collector.endpoint.format(board=board),
                     }

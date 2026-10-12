@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from services.api.app.db.session import get_db
-from services.api.app.models.job import Job, JobSource
+from services.api.app.models.job import IngestionRun, Job, JobSource
 from services.api.app.repositories.jobs import list_jobs, statistics, visible_conditions
 from services.api.app.schemas.jobs import JobDetail, JobFilters, JobPage, SourceOut, Stats
 
@@ -73,3 +73,45 @@ def metadata():
     from matching.skills import SKILL_ALIASES
 
     return {"role_families": ROLE_FAMILIES, "skills": list(SKILL_ALIASES)}
+
+
+@router.get("/ingestion")
+def ingestion(db: Database, limit: int = Query(20, ge=1, le=100)):
+    # Read-only operational summaries contain counters, not credentials or raw payloads.
+    from datetime import UTC, datetime
+
+    now = datetime.now(UTC)
+    today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    runs = db.scalars(
+        select(IngestionRun).order_by(IngestionRun.started_at.desc()).limit(limit)
+    ).all()
+    return {
+        "history": [
+            {
+                "id": str(run.id),
+                "started_at": run.started_at,
+                "completed_at": run.completed_at,
+                "status": run.status,
+                "summary": run.summary,
+            }
+            for run in runs
+        ],
+        "healthy_sources": db.scalar(
+            select(func.count())
+            .select_from(JobSource)
+            .where(
+                JobSource.enabled.is_(True),
+                JobSource.last_error.is_(None),
+                JobSource.last_successful_sync.is_not(None),
+            )
+        ),
+        "failing_sources": db.scalar(
+            select(func.count()).select_from(JobSource).where(JobSource.last_error.is_not(None))
+        ),
+        "jobs_created_today": db.scalar(
+            select(func.count()).select_from(Job).where(Job.first_seen_at >= today)
+        ),
+        "jobs_updated_today": db.scalar(
+            select(func.count()).select_from(Job).where(Job.updated_at >= today)
+        ),
+    }

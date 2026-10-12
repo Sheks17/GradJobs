@@ -51,9 +51,21 @@ class JobSource(Timestamps, Base):
     last_sync_attempt: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_error: Mapped[str | None] = mapped_column(Text)
     failure_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    last_error_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    disabled_reason: Mapped[str | None] = mapped_column(Text)
     active_jobs: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     sync_token: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class IngestionRun(Base):
+    __tablename__ = "ingestion_runs"
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(30), default="running")
+    summary: Mapped[dict] = mapped_column(JsonType, default=dict, server_default="{}")
+    __table_args__ = (Index("ix_ingestion_runs_started_at", "started_at"),)
 
 
 class Job(Timestamps, Base):

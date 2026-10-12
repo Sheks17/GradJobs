@@ -6,7 +6,7 @@ on:
         description: Optional provider recovery after migration
         type: choice
         default: none
-        options: [none, failed, greenhouse, lever, ashby, smartrecruiters, usajobs]
+        options: [none, failed, greenhouse, lever, ashby, smartrecruiters, usajobs, workday]
 permissions:
   contents: read
 concurrency:
@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: requirements-dev.lock
       - run: pip install -r requirements-dev.lock && pip install --no-deps -e .
       - name: Migrate schema
-        run: python -m alembic upgrade head
+        run: python -m collectors.production_check && python -m alembic upgrade head
       - name: Recover provider
         if: inputs.provider != 'none' && inputs.provider != 'failed'
         run: python -m collectors.sync_all --provider "$RECOVERY_PROVIDER" --output recovery-summary.json

@@ -6,6 +6,27 @@
 
 GradJobs is a live job discovery and tracking application for U.S. students, graduates, and early-career technology candidates. It collects supported public employer job boards, preserves source data, groups clear duplicates, and explains a rule-based early-career score. It does not claim complete coverage of the job market.
 
+## Problem and architecture
+
+Early-career candidates face fragmented employer sites and junior-sounding postings that require substantial experience. GradJobs brings real postings into a consistent, searchable model and surfaces the requirements behind each score. Applications always go to the original employer site.
+
+```mermaid
+flowchart TD
+    ATS[Public employer ATS sites and USAJOBS] --> Collectors[Provider collectors]
+    Actions[GitHub Actions scheduled ingestion] --> Collectors
+    Collectors --> Normalize[Validated normalization and deduplication]
+    Normalize --> Matching[Frozen deterministic matching and evidence]
+    Matching --> DB[(Neon PostgreSQL)]
+    DB --> API[FastAPI Vercel service]
+    API --> Web[Next.js Vercel service]
+    Web --> Browser[Browser]
+    Browser --> Local[Local application tracking and saved searches]
+```
+
+The API serves requests; ingestion runs in GitHub Actions, outside Vercel requests. Repository secrets supply production database and federal API credentials. A cron trigger runs every 30 minutes; executions are serialized and can take longer than the trigger interval. This is periodic discovery, not real-time job-market coverage.
+
+See [design decisions](docs/design-decisions.md), [MVP completion and measured scale](docs/mvp-completion.md), and [deployment operations](docs/deployment.md). Current database counts and source health are exposed at `/api/stats`, `/api/stats/providers`, `/api/sources`, and the read-only `/admin/ingestion` page.
+
 ## What is included
 
 Phase 3 adds separate required/preferred experience, contextual title levels, deterministic skills, fit evidence, confidence and conflict flags, and skill/category and quick filters. The user confirmed review of all 220 Phase 3 postings: precision 100%, recall 98.7%, F1 99.4%, and four-class accuracy 99.1%. See [matching methodology](docs/matching.md) and [validation provenance and report](docs/phase3-validation.md).

@@ -65,7 +65,11 @@ def create_source(data: SourceCreate, db: Database, admin: Admin):
         data.provider, data.board_token, data.company_name, data.provider_config
     )
     try:
-        collector.fetch()
+        rows = collector.fetch()
+        if not rows or not collector.snapshot_complete:
+            raise ValueError("Registration requires a complete nonempty snapshot")
+        for row in rows:
+            collector.normalize(row)
     except Exception:
         raise HTTPException(
             422, "Could not verify this public board; check provider and token"

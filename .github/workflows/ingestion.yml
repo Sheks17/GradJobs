@@ -28,7 +28,7 @@ jobs:
           cache-dependency-path: requirements-dev.lock
       - run: pip install -r requirements-dev.lock && pip install --no-deps -e .
       - name: Require configured database
-        run: python -c "import os; assert os.environ.get('DATABASE_URL'), 'INGESTION_DATABASE_URL secret is required'"
+        run: python -m collectors.production_check
       - name: Migrate and register sources
         run: python -m alembic upgrade head && python -m collectors.seed_sources
       - name: Sync registered sources

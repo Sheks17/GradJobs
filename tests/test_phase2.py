@@ -216,6 +216,9 @@ def test_source_registry_and_admin_guard(db, monkeypatch):
             assert client.post("/sources", json=record).status_code == 403
             monkeypatch.setattr(settings, "enable_admin_api", True)
             with patch.object(GreenhouseCollector, "fetch", return_value=[]):
+                assert client.post("/sources", json=record).status_code == 422
+            fixture = json.loads((Path(__file__).parent / "fixtures/greenhouse.json").read_text())
+            with patch.object(GreenhouseCollector, "fetch", return_value=fixture["jobs"]):
                 response = client.post("/sources", json=record)
                 assert response.status_code == 201, response.text
                 source_id = response.json()["id"]

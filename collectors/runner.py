@@ -5,18 +5,34 @@ from dataclasses import asdict, dataclass
 from datetime import timedelta
 
 from sqlalchemy import func, select, update
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from collectors.base import Collector
 from collectors.lifecycle import reconcile_missing, utc
 from collectors.locking import write_lock
 from collectors.providers import CAREERS
+from matching.scoring import MATCHING_VERSION
 from services.api.app.core.config import get_settings
 from services.api.app.db.session import utcnow
 from services.api.app.models.job import Job, JobSource, SourceSync
 from services.api.app.repositories.ingestion import upsert_job
 
 logger = logging.getLogger(__name__)
+
+
+def upsert_with_retry(db, source_id, data):
+    for attempt in range(3):
+        try:
+            with db.begin_nested():
+                return upsert_job(db, source_id, data)
+        except OperationalError as exc:
+            # Retry only transaction-safe transient errors after savepoint rollback.
+            code = getattr(exc.orig, "sqlstate", None)
+            if code not in {"40001", "40P01", "55P03"} or attempt == 2:
+                raise
+            time.sleep(0.1 * 2**attempt)
+    raise RuntimeError("Database retry budget exhausted")
 
 
 @dataclass
@@ -59,7 +75,8 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
             board_identifier=collector.board,
             company_name=collector.company,
             base_url=collector.endpoint.format(board=collector.board),
-            careers_url=CAREERS[collector.source_type].format(board=collector.board),
+            careers_url=getattr(collector, "careers_url", None)
+            or CAREERS[collector.source_type].format(board=collector.board),
             provider_config=collector.config,
         )
         db.add(source)
@@ -67,6 +84,15 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
     if not source.enabled:
         db.rollback()
         result.status = "disabled"
+        return result
+    settings = get_settings()
+    if (
+        source.failure_count >= settings.source_failure_threshold
+        and source.last_error_at
+        and utc(source.last_error_at) + timedelta(minutes=settings.source_cooldown_minutes) > now
+    ):
+        db.rollback()
+        result.status = "cooldown"
         return result
     if source.sync_token and source.lease_expires_at and utc(source.lease_expires_at) > now:
         db.rollback()
@@ -98,39 +124,43 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
         if source.sync_token != token:
             raise RuntimeError("Worker lease lost")
         seen: set[str] = set()
+        existing_jobs = {
+            job.source_job_id: job
+            for job in db.scalars(select(Job).where(Job.source_id == source_id))
+        }
+        observed_unchanged = []
         upsert_started = time.monotonic()
         for index, raw in enumerate(rows):
             try:
-                with db.begin_nested():
-                    data = collector.normalize(raw)
-                    if data is None:
-                        result.skipped += 1
-                        continue
-                    if data.source_job_id in seen:
-                        raise ValueError("Duplicate posting ID in source snapshot")
-                    seen.add(data.source_job_id)
-                    existing = db.scalar(
-                        select(Job).where(
-                            Job.source_id == source_id, Job.source_job_id == data.source_job_id
-                        )
-                    )
-                    unchanged = bool(
-                        existing
-                        and existing.is_active
-                        and existing.raw_data == data.raw_data
-                        and existing.company_name == data.company_name
-                        and existing.title == data.title
-                        and existing.description == data.description
-                        and existing.source_url == data.source_url
-                        and existing.apply_url == data.apply_url
-                        and existing.remote_type == data.remote_type
-                        and existing.provider_metadata == data.provider_metadata
-                    )
-                    _, created = upsert_job(db, source_id, data)
+                data = collector.normalize(raw)
+                if data is None:
+                    result.skipped += 1
+                    continue
+                if data.source_job_id in seen:
+                    raise ValueError("Duplicate posting ID in source snapshot")
+                seen.add(data.source_job_id)
+                existing = existing_jobs.get(data.source_job_id)
+                unchanged = bool(
+                    existing
+                    and existing.is_active
+                    and existing.matching_version == MATCHING_VERSION
+                    and existing.raw_data == data.raw_data
+                    and existing.company_name == data.company_name
+                    and existing.title == data.title
+                    and existing.description == data.description
+                    and existing.source_url == data.source_url
+                    and existing.apply_url == data.apply_url
+                    and existing.remote_type == data.remote_type
+                    and existing.provider_metadata == data.provider_metadata
+                    and existing.locations == data.locations
+                )
+                if unchanged:
+                    observed_unchanged.append(existing.id)
+                    result.unchanged += 1
+                    continue
+                _, created = upsert_with_retry(db, source_id, data)
                 if created:
                     result.created += 1
-                elif unchanged:
-                    result.unchanged += 1
                 else:
                     result.updated += 1
             except Exception as exc:
@@ -143,6 +173,17 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
                         "error_type": type(exc).__name__,
                     },
                 )
+        for offset in range(0, len(observed_unchanged), 500):
+            db.execute(
+                update(Job)
+                .where(Job.id.in_(observed_unchanged[offset : offset + 500]))
+                .values(
+                    last_seen_at=utcnow(),
+                    missing_since=None,
+                    consecutive_missing_syncs=0,
+                    updated_at=Job.updated_at,
+                )
+            )
         result.upsert_duration_ms = int((time.monotonic() - upsert_started) * 1000)
         if result.failures or not collector.snapshot_complete:
             result.status = "partial"
@@ -178,6 +219,13 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
             source.lease_expires_at = None
             source.last_error = error
             source.failure_count = source.failure_count + 1 if error else 0
+            if error:
+                source.last_error_at = utcnow()
+            source.disabled_reason = (
+                "Repeated failures; review source. Automatic cooldown retries remain enabled."
+                if source.failure_count >= settings.source_failure_threshold
+                else None
+            )
             if result.status == "success":
                 source.last_successful_sync = utcnow()
             source.active_jobs = (

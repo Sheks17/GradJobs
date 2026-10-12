@@ -32,6 +32,7 @@ credentials*.json
 *.bak
 *.dump
 data/private/
+Gradjob interview prep questions.docx
 data/exports/
 data/evaluation/
 apps/web/test-results/

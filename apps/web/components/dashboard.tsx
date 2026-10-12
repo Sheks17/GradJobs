@@ -16,6 +16,8 @@ import { fetchApi } from "@/lib/api";
 import type { JobPage, Stats } from "@/types/jobs";
 import { FiltersPanel, defaults, type Filters } from "./filters";
 import { JobCard } from "./job-card";
+import { SavedSearches } from "./saved-searches";
+import { relativeDate } from "@/lib/format";
 
 export function Dashboard() {
   const [filters, setFilters] = useState<Filters>(defaults);
@@ -233,13 +235,28 @@ export function Dashboard() {
               </button>
             ))}
           </div>
+          <SavedSearches
+            filters={filters}
+            query={query}
+            sort={sort}
+            onLoad={(saved) => {
+              setFilters(saved.filters);
+              setQuery(saved.query);
+              setSort(saved.sort);
+              setPage(1);
+            }}
+          />
           <div className="results-toolbar">
             <div>
               <h2>
                 Opportunities for you{" "}
                 <span>{loading ? "…" : (result?.total ?? 0)}</span>
               </h2>
-              <p>U.S. roles, with early-career relevance in focus.</p>
+              <p>
+                U.S. roles, with early-career relevance in focus.
+                {stats?.last_successful_sync &&
+                  ` Latest source update ${relativeDate(stats.last_successful_sync)}.`}
+              </p>
             </div>
             <label className="sort-label">
               Sort by

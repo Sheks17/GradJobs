@@ -27,7 +27,9 @@ UtcDatetime = Annotated[datetime, AfterValidator(ensure_utc)]
 
 
 class JobFilters(BaseModel):
-    provider: Literal["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs"] | None = None
+    provider: (
+        Literal["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs", "workday"] | None
+    ) = None
     q: str | None = Field(default=None, max_length=200)
     role_family: str | None = Field(default=None, max_length=100)
     seniority: Seniority | None = None
@@ -172,6 +174,7 @@ class JobPage(BaseModel):
 
 
 class Stats(BaseModel):
+    last_successful_sync: UtcDatetime | None = None
     active_jobs: int
     discovered_today: int
     discovered_this_week: int
@@ -196,6 +199,8 @@ class SourceOut(BaseModel):
     board_identifier: str
     active_jobs: int
     failure_count: int
+    last_error_at: UtcDatetime | None = None
+    disabled_reason: str | None = None
     created_at: UtcDatetime
     updated_at: UtcDatetime
     lease_expires_at: UtcDatetime | None

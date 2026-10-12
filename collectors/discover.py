@@ -11,6 +11,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from collectors.providers import PROVIDERS
+from collectors.workday import WorkdayCollector, source_token, workday_config
 from services.api.app.core.config import get_settings
 
 
@@ -111,6 +112,63 @@ def page_candidates(url: str, html: str) -> list[tuple[str, str]]:
 
 def discover(url: str) -> dict:
     url = url if "://" in url else "https://" + url
+    if (urlsplit(url).hostname or "").endswith(".myworkdayjobs.com"):
+        try:
+            config = workday_config(url)
+            collector = WorkdayCollector(source_token(config), config["tenant"], config=config)
+            try:
+                # Discovery verifies pagination and one detail, rather than downloading
+                # thousands of descriptions solely to identify a career board.
+                first = collector.request_json(
+                    "POST",
+                    url=collector.endpoint + "/jobs",
+                    json={
+                        "limit": 20,
+                        "offset": 0,
+                        "searchText": "",
+                        "appliedFacets": {},
+                    },
+                )
+                listings = first.get("jobPostings")
+                total = first.get("total")
+                if (
+                    not isinstance(total, int)
+                    or total < 1
+                    or not isinstance(listings, list)
+                    or not listings
+                ):
+                    raise ValueError("No visible Workday jobs")
+                listing = listings[0]
+                path = listing.get("externalPath", "")
+                if not path.startswith("/job/") or ".." in path:
+                    raise ValueError("Invalid Workday job path")
+                detail = collector.get_json(url=collector.endpoint + path)
+                collector.normalize({"listing": listing, "detail": detail})
+                if total > len(listings):
+                    second = collector.request_json(
+                        "POST",
+                        url=collector.endpoint + "/jobs",
+                        json={
+                            "limit": 20,
+                            "offset": len(listings),
+                            "searchText": "",
+                            "appliedFacets": {},
+                        },
+                    )
+                    if not second.get("jobPostings") or second["jobPostings"][0] == listing:
+                        raise ValueError("Workday pagination could not be verified")
+                return {
+                    "provider": "workday",
+                    "board_token": source_token(config),
+                    "provider_config": config,
+                    "verified": True,
+                    "jobs": total,
+                    "verification_scope": "list, pagination and first detail",
+                }
+            finally:
+                collector.close()
+        except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
+            return {"provider": "workday", "verified": False, "reason": type(exc).__name__}
     candidates = []
     direct = ats_from_url(url)
     if direct:
@@ -122,6 +180,18 @@ def discover(url: str) -> dict:
             headers={"User-Agent": get_settings().collector_user_agent},
         ) as client:
             final_url, html = allowed_page(client, url)
+            soup = BeautifulSoup(html, "html.parser")
+            workday_links = [
+                urljoin(final_url, node.get("href") or node.get("src") or "")
+                for node in soup.select("a[href], iframe[src]")
+            ]
+            if (urlsplit(final_url).hostname or "").endswith(".myworkdayjobs.com"):
+                workday_links.insert(0, final_url)
+            for link in workday_links:
+                if (urlsplit(link).hostname or "").endswith(".myworkdayjobs.com"):
+                    result = discover(link)
+                    if result["verified"]:
+                        return result
             candidates.extend(page_candidates(final_url, html))
             if not candidates:
                 soup = BeautifulSoup(html, "html.parser")
