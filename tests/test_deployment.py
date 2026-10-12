@@ -35,7 +35,7 @@ def test_hosted_postgres_urls_use_psycopg():
 
 
 def test_long_provider_employment_description_is_preserved(db, source):
-    employment = "Multiple appointment types and work schedules. " * 4
+    employment = ("Multiple appointment types and work schedules. " * 4).strip()
     job, created = upsert_job(
         db,
         source.id,
