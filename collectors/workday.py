@@ -2,12 +2,13 @@
 
 import re
 from concurrent.futures import ThreadPoolExecutor
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from urllib.parse import urlsplit
 
 from collectors.base import Collector
 from collectors.normalizers.location import location_fields
 from collectors.normalizers.text import plain_text
+from services.api.app.core.config import get_settings
 from shared.schemas import NormalizedJob
 
 
@@ -54,6 +55,10 @@ class WorkdayCollector(Collector):
             if key in self.config and self.config[key] != observed[key]:
                 raise ValueError("Workday configuration conflicts with careers URL")
         self.config = {**self.config, **observed}
+        if self.board != source_token(observed):
+            self.close()
+            raise ValueError("Workday board token conflicts with careers URL")
+        self.detail_cache = {}
         self.careers_url = observed["careers_url"]
         self.endpoint = (
             f"https://{observed['hostname']}/wday/cxs/{observed['tenant']}/{observed['site']}"
@@ -66,6 +71,7 @@ class WorkdayCollector(Collector):
             page = self.request_json(
                 "POST",
                 url=self.endpoint + "/jobs",
+                headers={"Accept-Language": self.config["locale"]},
                 json={
                     "limit": 20,
                     "offset": offset,
@@ -114,11 +120,36 @@ class WorkdayCollector(Collector):
         raise ValueError("Workday page limit reached; snapshot incomplete")
 
     def fetch_detail(self, listing):
+        path = listing["externalPath"]
+        cached = self.detail_cache.get(path)
+        if cached and cached.get("detail") and cached.get("_detail_checked_at"):
+            try:
+                checked = datetime.fromisoformat(cached["_detail_checked_at"])
+                ttl = timedelta(hours=get_settings().workday_detail_cache_hours)
+
+                def stable(summary):
+                    return {k: v for k, v in summary.items() if k != "postedOn"}
+
+                if checked + ttl > datetime.now(UTC) and stable(cached["listing"]) == stable(
+                    listing
+                ):
+                    return {**cached, "listing": listing}
+            except (ValueError, TypeError, KeyError):
+                pass  # Ignore invalid cache entries; retrieve a current public detail.
         try:
-            detail = self.get_json(url=self.endpoint + listing["externalPath"])
+            detail = self.get_json(
+                url=self.endpoint + listing["externalPath"],
+                headers={"Accept-Language": self.config["locale"]},
+            )
             if not isinstance(detail, dict) or not isinstance(detail.get("jobPostingInfo"), dict):
                 raise ValueError("Missing Workday detail")
-            return {"listing": listing, "detail": detail}
+            result = {
+                "listing": listing,
+                "detail": detail,
+                "_detail_checked_at": datetime.now(UTC).isoformat(),
+            }
+            self.detail_cache[path] = result
+            return result
         except Exception as exc:
             return {"listing": listing, "detail_error": type(exc).__name__}
 

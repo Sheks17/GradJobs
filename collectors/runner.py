@@ -35,6 +35,29 @@ def upsert_with_retry(db, source_id, data):
     raise RuntimeError("Database retry budget exhausted")
 
 
+def posting_unchanged(existing, data):
+    if not existing or not existing.is_active or existing.matching_version != MATCHING_VERSION:
+        return False
+    fields = data.model_dump(
+        exclude={
+            "remote_us_only",
+            "remote_states",
+            "excluded_states",
+            "timezone_requirement",
+            "remote_restriction_evidence",
+        }
+    )
+    for key, value in fields.items():
+        stored = getattr(existing, key)
+        if key in {"posted_at", "closing_at"} and value is None:
+            continue  # Preserve a previously supplied date when the provider omits it.
+        if key in {"posted_at", "closing_at", "source_updated_at"} and stored and value:
+            stored, value = utc(stored), utc(value)
+        if stored != value:
+            return False
+    return True
+
+
 @dataclass
 class SyncResult:
     fetched: int = 0
@@ -117,6 +140,13 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
     )
     error = None
     try:
+        if collector.source_type == "workday":
+            for raw in db.scalars(select(Job.raw_data).where(Job.source_id == source_id)):
+                if isinstance(raw, dict) and isinstance(raw.get("listing"), dict):
+                    path = raw["listing"].get("externalPath")
+                    if path:
+                        collector.detail_cache[path] = raw
+            db.rollback()  # Never hold a database transaction while retrieving HTTP details.
         rows = collector.fetch()
         result.fetched = len(rows)
         write_lock(db)
@@ -140,20 +170,7 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
                     raise ValueError("Duplicate posting ID in source snapshot")
                 seen.add(data.source_job_id)
                 existing = existing_jobs.get(data.source_job_id)
-                unchanged = bool(
-                    existing
-                    and existing.is_active
-                    and existing.matching_version == MATCHING_VERSION
-                    and existing.raw_data == data.raw_data
-                    and existing.company_name == data.company_name
-                    and existing.title == data.title
-                    and existing.description == data.description
-                    and existing.source_url == data.source_url
-                    and existing.apply_url == data.apply_url
-                    and existing.remote_type == data.remote_type
-                    and existing.provider_metadata == data.provider_metadata
-                    and existing.locations == data.locations
-                )
+                unchanged = posting_unchanged(existing, data)
                 if unchanged:
                     observed_unchanged.append(existing.id)
                     result.unchanged += 1

@@ -666,5 +666,69 @@
     "enabled": true,
     "verified_at": "2026-10-12T09:24:40.509833+00:00",
     "verification_url": "https://adobe.wd5.myworkdayjobs.com/wday/cxs/adobe/external_experienced"
+  },
+  {
+    "provider": "workday",
+    "board_token": "guidewire-wd5-myworkdayjobs-com-external",
+    "company_name": "Guidewire",
+    "careers_url": "https://guidewire.wd5.myworkdayjobs.com/en-US/external",
+    "provider_config": {
+      "hostname": "guidewire.wd5.myworkdayjobs.com",
+      "tenant": "guidewire",
+      "site": "external",
+      "locale": "en-US",
+      "careers_url": "https://guidewire.wd5.myworkdayjobs.com/en-US/external"
+    },
+    "enabled": true,
+    "verified_at": "2026-10-12T09:30:04.843931+00:00",
+    "verification_url": "https://guidewire.wd5.myworkdayjobs.com/wday/cxs/guidewire/external"
+  },
+  {
+    "provider": "workday",
+    "board_token": "zendesk-wd1-myworkdayjobs-com-zendesk",
+    "company_name": "Zendesk",
+    "careers_url": "https://zendesk.wd1.myworkdayjobs.com/en-US/zendesk",
+    "provider_config": {
+      "hostname": "zendesk.wd1.myworkdayjobs.com",
+      "tenant": "zendesk",
+      "site": "zendesk",
+      "locale": "en-US",
+      "careers_url": "https://zendesk.wd1.myworkdayjobs.com/en-US/zendesk"
+    },
+    "enabled": true,
+    "verified_at": "2026-10-12T09:30:59.999299+00:00",
+    "verification_url": "https://zendesk.wd1.myworkdayjobs.com/wday/cxs/zendesk/zendesk"
+  },
+  {
+    "provider": "workday",
+    "board_token": "workday-wd5-myworkdayjobs-com-Workday",
+    "company_name": "Workday",
+    "careers_url": "https://workday.wd5.myworkdayjobs.com/en-US/Workday",
+    "provider_config": {
+      "hostname": "workday.wd5.myworkdayjobs.com",
+      "tenant": "workday",
+      "site": "Workday",
+      "locale": "en-US",
+      "careers_url": "https://workday.wd5.myworkdayjobs.com/en-US/Workday"
+    },
+    "enabled": true,
+    "verified_at": "2026-10-12T09:32:03.622074+00:00",
+    "verification_url": "https://workday.wd5.myworkdayjobs.com/wday/cxs/workday/Workday"
+  },
+  {
+    "provider": "workday",
+    "board_token": "autodesk-wd1-myworkdayjobs-com-Ext",
+    "company_name": "Autodesk",
+    "careers_url": "https://autodesk.wd1.myworkdayjobs.com/en-US/Ext",
+    "provider_config": {
+      "hostname": "autodesk.wd1.myworkdayjobs.com",
+      "tenant": "autodesk",
+      "site": "Ext",
+      "locale": "en-US",
+      "careers_url": "https://autodesk.wd1.myworkdayjobs.com/en-US/Ext"
+    },
+    "enabled": true,
+    "verified_at": "2026-10-12T09:37:14.988029+00:00",
+    "verification_url": "https://autodesk.wd1.myworkdayjobs.com/wday/cxs/autodesk/Ext"
   }
 ]

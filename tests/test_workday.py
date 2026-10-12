@@ -47,7 +47,7 @@ def test_workday_configuration_and_no_guesses():
             workday_config(url)
 
 
-def test_pagination_details_dates_locations_duplicate_sync_and_changes(db):
+def test_pagination_details_dates_locations_duplicate_sync_and_changes(db, monkeypatch):
     revision = [0]
 
     def handler(request):
@@ -78,6 +78,9 @@ def test_pagination_details_dates_locations_duplicate_sync_and_changes(db):
     identities = {job.id: job.first_seen_at for job in db.scalars(select(Job))}
     second = sync_source(db, c)
     revision[0] = 1
+    from services.api.app.core.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "workday_detail_cache_hours", 0)
     third = sync_source(db, c)
     assert first.created == 2 and second.unchanged == 2 and third.updated == 2
     assert {job.id: job.first_seen_at for job in db.scalars(select(Job))} == identities

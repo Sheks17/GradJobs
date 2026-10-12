@@ -137,6 +137,11 @@ function SourceCard({ source }: { source: Source }) {
         <dd>{source.failure_count}</dd>
       </dl>
       {source.last_error && <p className="inline-error">{source.last_error}</p>}
+      {source.disabled_reason && (
+        <p className="inline-error">
+          Review required: {source.disabled_reason}
+        </p>
+      )}
       {source.careers_url && (
         <p>
           <a

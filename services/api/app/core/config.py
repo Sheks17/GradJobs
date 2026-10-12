@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     source_lease_minutes: int = Field(default=30, ge=5)
     source_failure_threshold: int = Field(default=3, ge=1, le=20)
     source_cooldown_minutes: int = Field(default=60, ge=1, le=1440)
+    workday_detail_cache_hours: int = Field(default=6, ge=0, le=24)
     new_job_hours: int = Field(default=24, ge=1)
     sync_interval_minutes: int = Field(default=30, ge=1)
     enable_admin_api: bool = False

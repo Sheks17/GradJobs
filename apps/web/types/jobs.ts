@@ -101,6 +101,8 @@ export interface Source {
   careers_url: string | null;
   active_jobs: number;
   failure_count: number;
+  disabled_reason?: string | null;
+  last_error_at?: string | null;
   status: string;
 }
 
