@@ -6,7 +6,7 @@ on:
         description: Optional provider recovery after migration
         type: choice
         default: none
-        options: [none, greenhouse, lever, ashby, smartrecruiters, usajobs]
+        options: [none, failed, greenhouse, lever, ashby, smartrecruiters, usajobs]
 permissions:
   contents: read
 concurrency:
@@ -34,8 +34,11 @@ jobs:
       - name: Migrate schema
         run: python -m alembic upgrade head
       - name: Recover provider
-        if: inputs.provider != 'none'
+        if: inputs.provider != 'none' && inputs.provider != 'failed'
         run: python -m collectors.sync_all --provider "$RECOVERY_PROVIDER" --output recovery-summary.json
+      - name: Retry completed failed sources
+        if: inputs.provider == 'failed'
+        run: python -m collectors.recover_failed
       - uses: actions/upload-artifact@v4
         if: always()
         with:

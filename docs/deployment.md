@@ -30,6 +30,8 @@ Run Actions → Scheduled employer ingestion → Run workflow before verifying j
 
 The existing local SQLite database is not uploaded. Production is populated from public source boards. To retain exact historic job IDs and first-seen timestamps, perform a separately reviewed database migration rather than committing or bundling a database file.
 
+For a schema release or targeted recovery, run Actions → Production database maintenance. Choose a provider to retry, `failed` to retry only completed sources with errors, or `none` to migrate without ingestion. Existing source leases and the database write lock still apply. The production employment-description column is text so long federal appointment/schedule labels are preserved.
+
 ## Build and deploy
 
 From `apps/web`, run `npm ci`, `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`, and `npm run build`. From the root, run `python -m ruff check .`, `python -m ruff format --check .`, and `python -m pytest -q`. Python 3.12 is selected for the API runtime. `requirements.txt` contains runtime dependency versions matching the tested development lock.
