@@ -8,6 +8,7 @@ from pathlib import Path
 
 import httpx
 
+from collectors.normalizers.text import description_fingerprint, normalize_title
 from matching.review import export_review
 from matching.sample_evaluation import LABELS
 from services.api.app.db.session import utcnow
@@ -22,6 +23,9 @@ def sample(base, exclude, output, seed=20261012):
     old = json.loads(exclude.read_text(encoding="utf-8"))["jobs"]
     identities = {(job["source"], str(job["source_job_id"])) for job in old}
     urls = {job["source_url"] for job in old}
+    contents = {
+        (normalize_title(job["title"]), description_fingerprint(job["description"])) for job in old
+    }
     rng, records = random.Random(seed), []
     with httpx.Client(timeout=60) as client:
         for provider in PROVIDERS:
@@ -51,9 +55,14 @@ def sample(base, exclude, output, seed=20261012):
                 response.raise_for_status()
                 job = response.json()
                 identity = (provider, str(job["source_job_id"]))
-                if identity in identities or job["source_url"] in urls:
+                fingerprint = (
+                    normalize_title(job["title"]),
+                    description_fingerprint(job["description"]),
+                )
+                if identity in identities or job["source_url"] in urls or fingerprint in contents:
                     continue
                 identities.add(identity)
+                contents.add(fingerprint)
                 records.append(
                     {
                         "job_id": job["id"],

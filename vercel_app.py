@@ -8,6 +8,7 @@ from fastapi import FastAPI
 if os.environ.get("VERCEL") == "1":
     os.environ["APP_ENV"] = "production"
     os.environ["ENABLE_ADMIN_API"] = "false"
+    os.environ.setdefault("CORS_ORIGINS", '["https://gradjobs-drab.vercel.app"]')
     database_url = os.environ.get("DATABASE_URL", "")
     if not database_url.startswith(("postgresql+psycopg://", "postgresql://", "postgres://")):
         raise RuntimeError("Configure DATABASE_URL with a hosted PostgreSQL URL")

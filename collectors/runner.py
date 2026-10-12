@@ -21,6 +21,21 @@ from services.api.app.repositories.ingestion import upsert_job
 logger = logging.getLogger(__name__)
 
 
+def observe_unchanged(db, identities):
+    for offset in range(0, len(identities), 500):
+        db.execute(
+            update(Job)
+            .where(Job.id.in_(identities[offset : offset + 500]))
+            .values(
+                last_seen_at=utcnow(),
+                missing_since=None,
+                consecutive_missing_syncs=0,
+                updated_at=Job.updated_at,
+            )
+        )
+    identities.clear()
+
+
 def upsert_with_retry(db, source_id, data):
     for attempt in range(3):
         try:
@@ -139,6 +154,7 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
         "source_started", extra={"provider": collector.source_type, "board": collector.board}
     )
     error = None
+    committed = {key: 0 for key in ("created", "updated", "unchanged")}
     try:
         if collector.source_type == "workday":
             for raw in db.scalars(select(Job.raw_data).where(Job.source_id == source_id)):
@@ -161,6 +177,21 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
         observed_unchanged = []
         upsert_started = time.monotonic()
         for index, raw in enumerate(rows):
+            if index and index % 100 == 0:
+                observe_unchanged(db, observed_unchanged)
+                source.lease_expires_at = utcnow() + timedelta(
+                    minutes=settings.source_lease_minutes
+                )
+                current_history = db.get(SourceSync, history_id)
+                for key in ("fetched", "created", "updated", "unchanged", "skipped"):
+                    setattr(current_history, f"jobs_{key}", getattr(result, key))
+                current_history.jobs_failed = result.failures
+                db.commit()
+                committed = {key: getattr(result, key) for key in committed}
+                write_lock(db)
+                db.refresh(source)
+                if source.sync_token != token:
+                    raise RuntimeError("Worker lease lost between batches")
             try:
                 data = collector.normalize(raw)
                 if data is None:
@@ -190,17 +221,7 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
                         "error_type": type(exc).__name__,
                     },
                 )
-        for offset in range(0, len(observed_unchanged), 500):
-            db.execute(
-                update(Job)
-                .where(Job.id.in_(observed_unchanged[offset : offset + 500]))
-                .values(
-                    last_seen_at=utcnow(),
-                    missing_since=None,
-                    consecutive_missing_syncs=0,
-                    updated_at=Job.updated_at,
-                )
-            )
+        observe_unchanged(db, observed_unchanged)
         result.upsert_duration_ms = int((time.monotonic() - upsert_started) * 1000)
         if result.failures or not collector.snapshot_complete:
             result.status = "partial"
@@ -210,7 +231,9 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
             result.status = "success"
     except Exception as exc:
         db.rollback()
-        result.created = result.updated = result.unchanged = result.closed = 0
+        for key, value in committed.items():
+            setattr(result, key, value)
+        result.closed = 0
         result.failures += 1
         result.status = "failed"
         error = f"Sync failed: {type(exc).__name__}"
@@ -226,8 +249,8 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
             "rate_limit_responses",
         ):
             setattr(result, key, getattr(collector, key))
-        # Successful data, lifecycle changes and history commit atomically.
-        # Failed snapshots were rolled back and require a fresh metadata transaction.
+        # Earlier validated batches remain committed after a worker failure.
+        # Closure reconciliation and final history are committed only after the snapshot.
         if not db.in_transaction():
             write_lock(db)
         db.refresh(source)
