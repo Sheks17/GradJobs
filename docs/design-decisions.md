@@ -65,3 +65,28 @@
 **Approach:** Disable source mutation and sync endpoints in production. The ingestion page exposes aggregate operational history only; GitHub Actions is the authenticated operations path.
 **Alternatives:** An admin token or full OAuth.
 **Tradeoff:** No in-browser production administration; avoids additional credential handling and unnecessary authentication infrastructure for the MVP.
+
+## Why GradJobs doesn't integrate every ATS the same way
+
+**Problem:** Employer ATS integrations often manage candidates, assessments or
+interviews. An assessment vendor's integration does not establish a public job
+feed or authorize an unrelated discovery platform to call that API.
+
+**Approach:** Maintain an evidence-backed capability registry separating ATS
+identification, access classification and runnable collectors. Use documented
+posting APIs or live-verified public career feeds. Workable's anonymous widget,
+Recruitee's published feed and BreezyHR's listing/structured JobPosting paths are
+separate from employer APIs. Keep unsupported candidates with a reason and last
+check rather than retrying them during ingestion. Require verification before
+registry activation; expose classifications on a read-only operational page.
+
+**Alternatives:** Treat every integration as public access, add employer tokens,
+reverse-engineer private APIs or scrape arbitrary page layouts.
+
+**Tradeoffs:** Some commonly used ATS platforms remain detection only. Custom
+domains, changing public endpoints and protected feeds limit coverage. Unknown
+access contracts stay unknown rather than being described as universally blocked
+or supported. Reliability and legitimate access take priority over provider counts.
+LinkedIn is not fetched, and no recruiter workflows or ATS write operations are
+implemented. Registry classifications remain available during a database outage;
+operational counts become unavailable rather than invented zeroes.

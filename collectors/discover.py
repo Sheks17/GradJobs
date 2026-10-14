@@ -10,6 +10,7 @@ from urllib.robotparser import RobotFileParser
 import httpx
 from bs4 import BeautifulSoup
 
+from collectors.ats_registry import ATS_REGISTRY, capability, detect_url
 from collectors.providers import PROVIDERS
 from collectors.workday import WorkdayCollector, source_token, workday_config
 from services.api.app.core.config import get_settings
@@ -36,6 +37,10 @@ def ats_from_url(url: str) -> tuple[str, str] | None:
         "www.smartrecruiters.com",
     }:
         token, provider = (parts[0] if parts else None), "smartrecruiters"
+    elif host == "apply.workable.com":
+        token, provider = (parts[0] if parts and parts[0] not in {"j", "api"} else None), "workable"
+    elif detect_url(url) in {"recruitee", "breezyhr"}:
+        token, provider = host.split(".")[0], detect_url(url)
     else:
         return None
     return (provider, token) if token and re.fullmatch(r"[A-Za-z0-9_-]{1,200}", token) else None
@@ -43,6 +48,9 @@ def ats_from_url(url: str) -> tuple[str, str] | None:
 
 def public_url(url: str) -> None:
     parsed = urlsplit(url)
+    host = (parsed.hostname or "").lower()
+    if host == "linkedin.com" or host.endswith(".linkedin.com"):
+        raise ValueError("LinkedIn fetching is disabled")
     if (
         parsed.scheme not in {"http", "https"}
         or not parsed.hostname
@@ -103,14 +111,14 @@ def page_candidates(url: str, html: str) -> list[tuple[str, str]]:
     # Public embedded JSON often contains an explicit ATS URL rather than an anchor.
     links.extend(
         re.findall(
-            r"https://(?:boards\.greenhouse\.io|job-boards\.greenhouse\.io|jobs\.lever\.co|jobs\.ashbyhq\.com|careers\.smartrecruiters\.com|jobs\.smartrecruiters\.com|www\.smartrecruiters\.com)/[A-Za-z0-9_/?=&-]+",
+            r"https://[A-Za-z0-9.-]+/[A-Za-z0-9_/?=&%-]*",
             html.replace("\\/", "/"),
         )
     )
     return list(dict.fromkeys(candidate for link in links if (candidate := ats_from_url(link))))
 
 
-def discover(url: str) -> dict:
+def _discover(url: str) -> dict:
     url = url if "://" in url else "https://" + url
     if (urlsplit(url).hostname or "").endswith(".myworkdayjobs.com"):
         try:
@@ -194,6 +202,10 @@ def discover(url: str) -> dict:
                         return result
             candidates.extend(page_candidates(final_url, html))
             if not candidates:
+                detected = detected_page(final_url, html)
+                if detected:
+                    return detected
+            if not candidates:
                 soup = BeautifulSoup(html, "html.parser")
                 career_links = list(
                     dict.fromkeys(
@@ -215,6 +227,8 @@ def discover(url: str) -> dict:
                     try:
                         page_url, page = allowed_page(client, link)
                         candidates.extend(page_candidates(page_url, page))
+                        if not candidates and (detected := detected_page(page_url, page)):
+                            return detected
                     except (httpx.HTTPError, ValueError):
                         continue
                     if candidates:
@@ -224,6 +238,11 @@ def discover(url: str) -> dict:
         collector = PROVIDERS[provider](board, board)
         try:
             jobs = collector.fetch()
+            if not getattr(collector, "snapshot_complete", True):
+                raise ValueError("Incomplete public snapshot")
+            if provider in {"workable", "recruitee", "breezyhr"}:
+                for job in jobs:
+                    collector.normalize(job)
             verified.append(
                 {"provider": provider, "board_token": board, "verified": True, "jobs": len(jobs)}
             )
@@ -232,10 +251,69 @@ def discover(url: str) -> dict:
         finally:
             collector.close()
     return (
-        {"provider": "unknown", "verified": False}
+        {
+            "provider": candidates[0][0] if candidates else "unknown",
+            "verified": False,
+            "reason": "Endpoint verification failed" if candidates else "No reliable ATS evidence",
+        }
         if not verified
         else {**verified[0], "candidates": verified}
     )
+
+
+def detected_page(url, html):
+    soup = BeautifulSoup(html, "html.parser")
+    links = [url] + [
+        urljoin(url, node.get("href") or node.get("src") or "")
+        for node in soup.select("a[href],iframe[src]")
+    ]
+    links.extend(
+        re.findall(r"https://[A-Za-z0-9.-]+/[A-Za-z0-9_/?=&%-]*", html.replace("\\/", "/"))
+    )
+    for link in links[:500]:
+        provider = detect_url(link)
+        if provider:
+            return {
+                **capability(provider),
+                "verified": False,
+                "observed_careers_url": link,
+                "reason": "Observed ATS URL; no usable endpoint verified",
+            }
+    # A LinkedIn profile/apply/social link or mention of an integration is not
+    # evidence that this careers site is powered by Talent Hub.
+    generator = soup.find("meta", attrs={"name": "generator"})
+    if generator:
+        value = generator.get("content", "").casefold().strip()
+        for provider, item in ATS_REGISTRY.items():
+            if value in {name.casefold() for name in [item["canonical_name"], *item["aliases"]]}:
+                return {
+                    **capability(provider),
+                    "verified": False,
+                    "detection_confidence": "medium"
+                    if provider == "linkedin_talent_hub"
+                    else "high",
+                    "reason": "Observed generator metadata; no account identifier guessed",
+                }
+    return None
+
+
+def discover(url: str) -> dict:
+    url = url if "://" in url else "https://" + url
+    host = (urlsplit(url).hostname or "").lower()
+    if host == "linkedin.com" or host.endswith(".linkedin.com"):
+        return {
+            "provider": "unknown",
+            "verified": False,
+            "reason": "LinkedIn fetching is disabled; a URL cannot identify Talent Hub",
+        }
+    detected = detect_url(url)
+    if detected and detected not in PROVIDERS:
+        return {**capability(detected), "verified": False, "observed_careers_url": url}
+    result = _discover(url)
+    if result["provider"] == "unknown" and detected:
+        result.update(provider=detected, reason="Observed ATS URL; account/endpoint not verified")
+    provider = result["provider"]
+    return {**(capability(provider) if provider in ATS_REGISTRY else {}), **result}
 
 
 if __name__ == "__main__":
@@ -247,6 +325,15 @@ if __name__ == "__main__":
         print(f"Provider: {result['provider']}\nVerified: {str(result['verified']).lower()}")
         if result.get("board_token"):
             print(f"Board token: {result['board_token']}")
+        for key, label in (
+            ("detection_confidence", "Detection confidence"),
+            ("public_ingestion", "Public ingestion"),
+            ("access_classification", "Access classification"),
+            ("jobs", "Visible jobs"),
+            ("unsupported_reason", "Reason"),
+        ):
+            if result.get(key) is not None:
+                print(f"{label}: {result[key]}")
     except (ValueError, httpx.HTTPError, OSError) as exc:
         print(f"Provider: unknown\nVerified: false\nReason: {type(exc).__name__}")
         raise SystemExit(1) from None

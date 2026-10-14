@@ -16,7 +16,11 @@ def discover_batch(path, output, retry=False):
         candidates = list(csv.DictReader(handle))
     for candidate in candidates:
         url = candidate["careers_url"].strip()
-        if url in previous and (previous[url].get("verified") or not retry):
+        if url in previous and (
+            previous[url].get("verified")
+            or previous[url].get("stage") == "unsupported_provider"
+            or not retry
+        ):
             continue
         record = {**candidate, "stage": "discovered", "verified": False}
         try:
@@ -28,7 +32,9 @@ def discover_batch(path, output, retry=False):
                     reason="Endpoint reachable but no usable postings; not eligible for activation",
                 )
             record["stage"] = (
-                "verified"
+                "unsupported_provider"
+                if result.get("public_ingestion") == "detection_only"
+                else "verified"
                 if record["verified"]
                 else "provider_detected"
                 if result["provider"] != "unknown"
@@ -37,6 +43,9 @@ def discover_batch(path, output, retry=False):
         except Exception as exc:
             record.update(stage="temporarily_unavailable", reason=type(exc).__name__)
         record["checked_at"] = utcnow().isoformat()
+        if record["stage"] == "unsupported_provider":
+            record["last_checked"] = record["checked_at"]
+            record["future_review_after"] = None
         previous[url] = record
         output.parent.mkdir(parents=True, exist_ok=True)
         temporary = output.with_suffix(".tmp")

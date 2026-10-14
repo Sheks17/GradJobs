@@ -1,16 +1,16 @@
 import re
-from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
 from services.api.app.schemas.jobs import UtcDatetime
+from shared.constants import CollectorProvider
 
 
 class SourceCreate(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
     company_name: str = Field(min_length=1, max_length=250)
-    provider: Literal["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs", "workday"]
+    provider: CollectorProvider
     board_token: str = Field(pattern=r"^[A-Za-z0-9_-]{1,200}$")
     careers_url: str | None = None
     enabled: bool = True

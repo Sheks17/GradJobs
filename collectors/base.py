@@ -61,7 +61,12 @@ class Collector(ABC):
     ) -> Any:
         return self.request_json("GET", params=params, url=url, headers=headers)
 
-    def request_json(self, method, *, params=None, url=None, headers=None, json=None) -> Any:
+    def request_text(self, url):
+        return self.request_json("GET", url=url, response_format="text")
+
+    def request_json(
+        self, method, *, params=None, url=None, headers=None, json=None, response_format="json"
+    ) -> Any:
         for attempt in range(4):
             self.sleep(get_settings().collector_request_interval)
             started = time.monotonic()
@@ -93,6 +98,10 @@ class Collector(ABC):
                         self.sleep(delay + random.uniform(0, 0.3))
                         continue
                 response.raise_for_status()
+                if response_format == "text":
+                    if len(response.content) > 2_000_000:
+                        raise ValueError("Public career page exceeds 2 MB limit")
+                    return response.text
                 return response.json()
             except httpx.TransportError:
                 self.request_latency_ms += int((time.monotonic() - started) * 1000)

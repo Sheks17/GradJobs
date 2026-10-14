@@ -73,6 +73,9 @@ export function FiltersPanel({
               "smartrecruiters",
               "usajobs",
               "workday",
+              "workable",
+              "recruitee",
+              "breezyhr",
             ].map((provider) => (
               <option key={provider} value={provider}>
                 {provider}

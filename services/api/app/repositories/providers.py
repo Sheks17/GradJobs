@@ -1,7 +1,9 @@
 """Provider health and request costs from the latest attempt per configured source."""
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import SQLAlchemyError
 
+from collectors.ats_registry import ATS_REGISTRY
 from collectors.providers import PROVIDERS
 from services.api.app.models.job import Job, JobSource, SourceSync
 from services.api.app.schemas.jobs import ensure_utc
@@ -42,6 +44,18 @@ def provider_statistics(db):
         output.append(
             {
                 "provider": provider,
+                "access_classification": ATS_REGISTRY[provider]["ingestion_status"],
+                "detection_supported": ATS_REGISTRY[provider]["source_discovery_supported"],
+                "ingestion_supported": True,
+                "verified_employers": len(
+                    {
+                        source.company_name.casefold()
+                        for source in group
+                        if source.enabled and source.company_name and source.last_successful_sync
+                    }
+                )
+                if provider != "usajobs"
+                else 0,
                 "sources": len(group),
                 "enabled_sources": sum(source.enabled for source in group),
                 "healthy": sum(
@@ -76,3 +90,29 @@ def provider_statistics(db):
             }
         )
     return output
+
+
+def ats_statistics(db):
+    available = True
+    try:
+        statistics = {row["provider"]: row for row in provider_statistics(db)}
+    except SQLAlchemyError:
+        db.rollback()
+        available = False
+        statistics = {}
+    return [
+        {
+            **record,
+            "provider": provider,
+            "ingestion_supported": provider in PROVIDERS,
+            "detection_supported": record["source_discovery_supported"],
+            "database_available": available,
+            "verified_employers": 0 if available else None,
+            "active_jobs": 0 if available else None,
+            "last_successful_sync": None,
+            "healthy": 0 if available else None,
+            "failing": 0 if available else None,
+            **statistics.get(provider, {}),
+        }
+        for provider, record in ATS_REGISTRY.items()
+    ]

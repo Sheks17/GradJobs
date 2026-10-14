@@ -15,7 +15,7 @@ from pydantic import (
 
 from services.api.app.core.config import get_settings
 from services.api.app.db.session import utcnow
-from shared.constants import RemoteType, Seniority
+from shared.constants import CollectorProvider, RemoteType, Seniority
 
 
 def ensure_utc(value: datetime) -> datetime:
@@ -27,9 +27,7 @@ UtcDatetime = Annotated[datetime, AfterValidator(ensure_utc)]
 
 
 class JobFilters(BaseModel):
-    provider: (
-        Literal["greenhouse", "lever", "ashby", "smartrecruiters", "usajobs", "workday"] | None
-    ) = None
+    provider: CollectorProvider | None = None
     q: str | None = Field(default=None, max_length=200)
     role_family: str | None = Field(default=None, max_length=100)
     seniority: Seniority | None = None

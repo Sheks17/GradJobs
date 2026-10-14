@@ -54,3 +54,19 @@ def test_live_usajobs_official_authenticated_search():
         assert data.description and data.source_job_id and data.provider_metadata["federal"]
     finally:
         collector.close()
+
+
+def test_live_existing_workday_discovery_and_detail():
+    import json
+    from pathlib import Path
+
+    from collectors.discover import discover
+
+    sources = json.loads(Path("data/sources.json").read_text())
+    source = next(
+        row
+        for row in sources
+        if row["provider"] == "workday" and row["company_name"] == "Guidewire"
+    )
+    result = discover(source["careers_url"])
+    assert result["provider"] == "workday" and result["verified"] and result["jobs"] > 0

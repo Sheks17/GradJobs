@@ -6,7 +6,7 @@ on:
         description: Optional provider recovery after migration
         type: choice
         default: none
-        options: [none, failed, greenhouse, lever, ashby, smartrecruiters, usajobs, workday]
+        options: [none, failed, greenhouse, lever, ashby, smartrecruiters, usajobs, workday, workable, recruitee, breezyhr]
 permissions:
   contents: read
 concurrency:

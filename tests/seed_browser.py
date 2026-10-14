@@ -5,6 +5,7 @@ from pathlib import Path
 
 from sqlalchemy.engine import make_url
 
+from collectors.providers import PROVIDERS
 from services.api.app.core.config import get_settings
 from services.api.app.db.session import SessionLocal, utcnow
 from services.api.app.models.job import IngestionRun, JobSource, SourceSync
@@ -18,7 +19,7 @@ def seed():
         raise ValueError("Browser fixtures require an isolated browser-test.db database")
     now = utcnow()
     with SessionLocal() as db:
-        for provider in ("greenhouse", "lever", "ashby", "smartrecruiters", "usajobs", "workday"):
+        for provider in PROVIDERS:
             source = JobSource(
                 name=f"Browser fixture {provider}",
                 company_name=f"Fixture {provider}",

@@ -29,6 +29,24 @@ See [design decisions](docs/design-decisions.md), [MVP completion and measured s
 
 ## What is included
 
+### Fully supported providers
+
+Greenhouse, Lever, Ashby, SmartRecruiters, Workday, Workable, Recruitee and BreezyHR
+retrieve published employer postings. USAJOBS is an additional supported federal
+provider using registered API credentials. The three new adapters passed live
+verification and repeat imports; production population depends on database access.
+
+### Detected only
+
+Avature, BrassRing, Darwinbox, Freshteam, iCIMS, JazzHR, Jobvite, Kula, Oracle
+Recruiting Cloud, Rippling, SAP SuccessFactors, Teamtailor and Zoho Recruit have
+hosted URL detection. LinkedIn Talent Hub has limited exact generator-metadata
+detection; LinkedIn is never fetched or scraped. Employer/partner API access and
+unverified anonymous contracts are not presented as job-ingestion support.
+See the [22-ATS access matrix](docs/ats-support-matrix.md) and read-only
+`/admin/providers` page. The registry remains visible when database metrics are
+unavailable; unknown counts are not shown as zero.
+
 The MVP supports Greenhouse, Lever, Ashby, SmartRecruiters, USAJOBS and Workday through one normalized job model. It provides freshness and relevance filters, explainable scores, original employer application links, browser-local application tracking and named saved searches. Source health and ingestion history make partial failures visible. Current timestamped scale and verification evidence are in the [completion report](docs/mvp-completion.md).
 
 ![Production dashboard with the Software Engineering filter](docs/images/dashboard-2026-10-12.jpg)

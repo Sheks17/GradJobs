@@ -24,8 +24,8 @@ serialized cloud ingestion, production PostgreSQL audit, public deployment smoke
 local saved searches, 150 unlabeled holdout postings, security checks, full tests,
 production build and portfolio/design-decision documentation.
 
-One verification remains: observing an actual GitHub Actions `schedule` event.
-Cloud dispatch and persistent production writes are proven; timer delivery is not
-yet observed. The latest full run safely reported one malformed Autodesk posting
-as partial. See [the measured report](mvp-completion.md) for evidence and limits.
-No classifier changes or extra required phase were added.
+Timer verification was completed on 13 October: three successful automatic events,
+including 84/84 source success in run 38439471093. The 14 October database quota
+outage is a separate operational dependency. See [the expansion report](final-ats-expansion.md)
+and [MVP report](mvp-completion.md). No classifier changes or extra required phase
+were added.

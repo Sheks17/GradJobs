@@ -1,10 +1,13 @@
 # GradJobs MVP completion report
 
-Measured 12 October 2026. **GradJobs MVP is not yet complete:** implementation,
-deployment and validation are ready, but delivery of an actual GitHub Actions
-`schedule` event has not been observed. Manual cloud ingestion is verified.
-Timer verification is the only remaining blocker; no new development phase is
-required. Counts below are dated observations, not live marketing claims.
+Updated 14 October 2026. The timer blocker was cleared by three successful
+automatic scheduled runs on 13 October. The latest refreshed all 84 sources.
+Today Neon rejects connections because the account/project quota is exceeded.
+**GradJobs MVP is not currently operationally complete:** restore Neon access and
+verify the new cloud import and production smoke checks. No new development phase
+is required. See [final ATS expansion](final-ats-expansion.md) for 102 verified
+employers, nine collectors and current validation. The detailed 12 October
+measurements below remain historical observations, not current counts.
 
 ## Production and scale
 
@@ -193,9 +196,12 @@ metadata adapters, cross-device accounts and email alerts.
 
 ## Concrete completion blocker
 
-Observe GitHub → Actions → Scheduled employer ingestion with event `schedule`,
-then inspect its artifact and production `/api/ingestion` update. Workflow and
-secrets are configured; no credential entry is currently needed. A partial result
-caused by malformed source data must remain visibly partial.
+Automatic event delivery was verified in scheduled run **38439471093**, completed
+13 October at **17:56:49 UTC**, with 84/84 successful sources and persisted writes.
+Today restore database access in Vercel → Storage → connected Neon project →
+Usage/Billing, then verify cloud ingestion and production API/job search. No
+credentials should be pasted into chat or committed. New-provider production
+counts cannot be reported until database access and cloud ingestion succeed.
 
-**GradJobs MVP is not yet complete.** Automatic timer delivery remains unverified.
+**GradJobs MVP is not yet complete.** Production is blocked by Neon quota;
+automatic scheduled ingestion has been verified.

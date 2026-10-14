@@ -1,5 +1,20 @@
 import { expect, test } from "@playwright/test";
 
+test("ATS registry separates detection and collection", async ({ page }) => {
+  await page.goto("/admin/providers");
+  await expect(
+    page.getByRole("heading", { name: "ATS capabilities" }),
+  ).toBeVisible();
+  const workable = page.getByRole("row").filter({ hasText: "Workable" });
+  await expect(workable).toContainText("Supported");
+  const teamtailor = page.getByRole("row").filter({ hasText: "Teamtailor" });
+  await expect(teamtailor).toContainText("Unavailable");
+  await expect(teamtailor).toContainText("AUTHENTICATED API");
+  await expect(
+    page.getByRole("row").filter({ hasText: "LinkedIn Talent Hub" }),
+  ).toContainText("PARTNER ONLY");
+});
+
 test("provider health matches persisted API results", async ({
   page,
   request,

@@ -866,5 +866,155 @@
     "verified_at": "2026-10-12T09:55:06.743305+00:00",
     "verification_url": "https://intel.wd1.myworkdayjobs.com/wday/cxs/intel/External",
     "enabled": true
+  },
+  {
+    "provider": "workable",
+    "board_token": "careers",
+    "company_name": "Workable",
+    "careers_url": "https://apply.workable.com/careers/",
+    "verified_at": "2026-10-14T21:57:00.524420+00:00",
+    "verification_url": "https://apply.workable.com/api/v1/widget/accounts/careers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "workable",
+    "board_token": "commonapp",
+    "company_name": "Common App",
+    "careers_url": "https://apply.workable.com/commonapp/",
+    "verified_at": "2026-10-14T21:57:03.517272+00:00",
+    "verification_url": "https://apply.workable.com/api/v1/widget/accounts/commonapp",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "workable",
+    "board_token": "electrum",
+    "company_name": "Electrum Software",
+    "careers_url": "https://apply.workable.com/electrum/",
+    "verified_at": "2026-10-14T21:57:08.302469+00:00",
+    "verification_url": "https://apply.workable.com/api/v1/widget/accounts/electrum",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "workable",
+    "board_token": "reasonable",
+    "company_name": "Reasonable AI",
+    "careers_url": "https://apply.workable.com/reasonable/",
+    "verified_at": "2026-10-14T21:57:12.291863+00:00",
+    "verification_url": "https://apply.workable.com/api/v1/widget/accounts/reasonable",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "workable",
+    "board_token": "craftable-software",
+    "company_name": "Craftable Software",
+    "careers_url": "https://apply.workable.com/craftable-software/",
+    "verified_at": "2026-10-14T21:57:17.116976+00:00",
+    "verification_url": "https://apply.workable.com/api/v1/widget/accounts/craftable-software",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "recruitee",
+    "board_token": "dvtcareers",
+    "company_name": "DVT",
+    "careers_url": "https://dvtcareers.recruitee.com/",
+    "verified_at": "2026-10-14T21:57:20.559779+00:00",
+    "verification_url": "https://dvtcareers.recruitee.com/api/offers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "recruitee",
+    "board_token": "joinready",
+    "company_name": "Ready",
+    "careers_url": "https://joinready.recruitee.com/",
+    "verified_at": "2026-10-14T21:57:22.416584+00:00",
+    "verification_url": "https://joinready.recruitee.com/api/offers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "recruitee",
+    "board_token": "bytecode",
+    "company_name": "Byte-Code",
+    "careers_url": "https://bytecode.recruitee.com/",
+    "verified_at": "2026-10-14T21:57:25.686334+00:00",
+    "verification_url": "https://bytecode.recruitee.com/api/offers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "recruitee",
+    "board_token": "grid",
+    "company_name": "GRID",
+    "careers_url": "https://grid.recruitee.com/",
+    "verified_at": "2026-10-14T21:57:27.358378+00:00",
+    "verification_url": "https://grid.recruitee.com/api/offers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "recruitee",
+    "board_token": "grip",
+    "company_name": "Grip",
+    "careers_url": "https://grip.recruitee.com/",
+    "verified_at": "2026-10-14T21:57:28.980241+00:00",
+    "verification_url": "https://grip.recruitee.com/api/offers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "recruitee",
+    "board_token": "clockworks",
+    "company_name": "Clockworks",
+    "careers_url": "https://clockworks.recruitee.com/",
+    "verified_at": "2026-10-14T21:57:30.706497+00:00",
+    "verification_url": "https://clockworks.recruitee.com/api/offers",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "breezyhr",
+    "board_token": "adaptic-llc",
+    "company_name": "Adaptic",
+    "careers_url": "https://adaptic-llc.breezy.hr/",
+    "verified_at": "2026-10-14T21:57:32.410297+00:00",
+    "verification_url": "https://adaptic-llc.breezy.hr/json",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "breezyhr",
+    "board_token": "knexus-research-corp",
+    "company_name": "Knexus Research",
+    "careers_url": "https://knexus-research-corp.breezy.hr/",
+    "verified_at": "2026-10-14T21:57:54.311817+00:00",
+    "verification_url": "https://knexus-research-corp.breezy.hr/json",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "breezyhr",
+    "board_token": "sonus-microsystems",
+    "company_name": "Sonus Microsystems",
+    "careers_url": "https://sonus-microsystems.breezy.hr/",
+    "verified_at": "2026-10-14T21:57:56.853830+00:00",
+    "verification_url": "https://sonus-microsystems.breezy.hr/json",
+    "enabled": true,
+    "provider_config": {}
+  },
+  {
+    "provider": "breezyhr",
+    "board_token": "b2b-hq",
+    "company_name": "B2B HQ",
+    "careers_url": "https://b2b-hq.breezy.hr/",
+    "verified_at": "2026-10-14T21:58:02.261859+00:00",
+    "verification_url": "https://b2b-hq.breezy.hr/json",
+    "enabled": true,
+    "provider_config": {}
   }
 ]

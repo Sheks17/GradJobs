@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchApi } from "@/lib/api";
+import Link from "next/link";
 
 type Run = {
   id: string;
@@ -44,6 +45,7 @@ export function Ingestion() {
       <section className="page-intro">
         <div>
           <h1>Ingestion health</h1>
+          <Link href="/admin/providers">ATS capabilities</Link>
           <p>
             Read-only operational history. Source changes and sync controls
             remain disabled publicly.

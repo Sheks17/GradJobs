@@ -67,6 +67,13 @@ def provider_stats(db: Database):
     return provider_statistics(db)
 
 
+@router.get("/stats/ats")
+def ats_capabilities(db: Session = Depends(get_db)):
+    from services.api.app.repositories.providers import ats_statistics
+
+    return ats_statistics(db)
+
+
 @router.get("/metadata")
 def metadata():
     from matching.aliases import ROLE_FAMILIES

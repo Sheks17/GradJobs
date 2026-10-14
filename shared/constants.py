@@ -3,6 +3,17 @@ from typing import Literal
 from matching.aliases import ROLE_FAMILIES as ROLE_FAMILIES
 
 RemoteType = Literal["remote", "hybrid", "onsite", "unknown"]
+CollectorProvider = Literal[
+    "greenhouse",
+    "lever",
+    "ashby",
+    "smartrecruiters",
+    "usajobs",
+    "workday",
+    "workable",
+    "recruitee",
+    "breezyhr",
+]
 SourceType = Literal[
     "greenhouse",
     "lever",
@@ -10,6 +21,9 @@ SourceType = Literal[
     "smartrecruiters",
     "usajobs",
     "workday",
+    "workable",
+    "recruitee",
+    "breezyhr",
     "api",
     "custom",
     "manual",
