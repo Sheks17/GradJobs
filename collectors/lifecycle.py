@@ -1,7 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session, aliased, load_only
 
 from services.api.app.core.config import get_settings
 from services.api.app.models.job import Job
@@ -14,7 +14,11 @@ def utc(value: datetime) -> datetime:
 def expire_deadlines(db, now):
     """Retain postings whose source-supplied deadline has elapsed."""
     count = 0
-    for job in db.scalars(select(Job).where(Job.is_active.is_(True), Job.closing_at <= now)):
+    for job in db.scalars(
+        select(Job)
+        .options(load_only(Job.id, Job.is_active, Job.closed_at, raiseload=True))
+        .where(Job.is_active.is_(True), Job.closing_at <= now)
+    ):
         job.is_active = False
         job.closed_at = job.closed_at or now
         count += 1
@@ -27,7 +31,21 @@ def reconcile_missing(db: Session, source_id, seen: set[str], now: datetime) -> 
     """Call only after a complete, fully validated snapshot."""
     settings = get_settings()
     closed = 0
-    for job in db.scalars(select(Job).where(Job.source_id == source_id, Job.is_active.is_(True))):
+    for job in db.scalars(
+        select(Job)
+        .options(
+            load_only(
+                Job.id,
+                Job.source_job_id,
+                Job.missing_since,
+                Job.consecutive_missing_syncs,
+                Job.is_active,
+                Job.closed_at,
+                raiseload=True,
+            )
+        )
+        .where(Job.source_id == source_id, Job.is_active.is_(True), Job.source_job_id.not_in(seen))
+    ):
         if job.source_job_id in seen:
             continue
         job.missing_since = job.missing_since or now
@@ -54,7 +72,9 @@ def promote_active_aliases(db: Session) -> None:
         .distinct()
     )
     for canonical in db.scalars(
-        select(Job).where(
+        select(Job)
+        .options(load_only(Job.id, Job.duplicate_of, raiseload=True))
+        .where(
             Job.is_active.is_(False),
             Job.duplicate_of.is_(None),
             Job.id.in_(surviving_canonical_ids),
@@ -62,6 +82,7 @@ def promote_active_aliases(db: Session) -> None:
     ):
         aliases = db.scalars(
             select(Job)
+            .options(load_only(Job.id, Job.duplicate_of, raiseload=True))
             .where(Job.duplicate_of == canonical.id, Job.is_active.is_(True))
             .order_by(Job.first_seen_at, Job.id)
         ).all()

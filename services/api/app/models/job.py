@@ -95,6 +95,7 @@ class Job(Timestamps, Base):
     normalized_title: Mapped[str] = mapped_column(String(500))
     description: Mapped[str] = mapped_column(Text)
     description_fingerprint: Mapped[str] = mapped_column(String(64))
+    ingestion_fingerprint: Mapped[str | None] = mapped_column(String(64))
     location_raw: Mapped[str | None] = mapped_column(Text)
     normalized_location: Mapped[str] = mapped_column(Text)
     city: Mapped[str | None] = mapped_column(String(200))

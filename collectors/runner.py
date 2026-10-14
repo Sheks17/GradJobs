@@ -9,10 +9,11 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
 from collectors.base import Collector
+from collectors.ingestion_state import source_state, unchanged
 from collectors.lifecycle import reconcile_missing, utc
 from collectors.locking import write_lock
 from collectors.providers import CAREERS
-from matching.scoring import MATCHING_VERSION
+from collectors.public_cache import load_detail_cache, save_detail_cache
 from services.api.app.core.config import get_settings
 from services.api.app.db.session import utcnow
 from services.api.app.models.job import Job, JobSource, SourceSync
@@ -21,11 +22,13 @@ from services.api.app.repositories.ingestion import upsert_job
 logger = logging.getLogger(__name__)
 
 
-def observe_unchanged(db, identities):
+def observe_unchanged(db, identities, source_id):
     for offset in range(0, len(identities), 500):
         db.execute(
             update(Job)
-            .where(Job.id.in_(identities[offset : offset + 500]))
+            .where(
+                Job.source_id == source_id, Job.source_job_id.in_(identities[offset : offset + 500])
+            )
             .values(
                 last_seen_at=utcnow(),
                 missing_since=None,
@@ -48,29 +51,6 @@ def upsert_with_retry(db, source_id, data):
                 raise
             time.sleep(0.1 * 2**attempt)
     raise RuntimeError("Database retry budget exhausted")
-
-
-def posting_unchanged(existing, data):
-    if not existing or not existing.is_active or existing.matching_version != MATCHING_VERSION:
-        return False
-    fields = data.model_dump(
-        exclude={
-            "remote_us_only",
-            "remote_states",
-            "excluded_states",
-            "timezone_requirement",
-            "remote_restriction_evidence",
-        }
-    )
-    for key, value in fields.items():
-        stored = getattr(existing, key)
-        if key in {"posted_at", "closing_at"} and value is None:
-            continue  # Preserve a previously supplied date when the provider omits it.
-        if key in {"posted_at", "closing_at", "source_updated_at"} and stored and value:
-            stored, value = utc(stored), utc(value)
-        if stored != value:
-            return False
-    return True
 
 
 @dataclass
@@ -157,28 +137,22 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
     committed = {key: 0 for key in ("created", "updated", "unchanged")}
     try:
         if collector.source_type == "workday":
-            for raw in db.scalars(select(Job.raw_data).where(Job.source_id == source_id)):
-                if isinstance(raw, dict) and isinstance(raw.get("listing"), dict):
-                    path = raw["listing"].get("externalPath")
-                    if path:
-                        collector.detail_cache[path] = raw
-            db.rollback()  # Never hold a database transaction while retrieving HTTP details.
+            collector.detail_cache.update(load_detail_cache(collector.board))
         rows = collector.fetch()
+        if collector.source_type == "workday":
+            save_detail_cache(collector.board, collector.detail_cache, collector.normalize)
         result.fetched = len(rows)
         write_lock(db)
         db.refresh(source)
         if source.sync_token != token:
             raise RuntimeError("Worker lease lost")
         seen: set[str] = set()
-        existing_jobs = {
-            job.source_job_id: job
-            for job in db.scalars(select(Job).where(Job.source_id == source_id))
-        }
+        existing_jobs = source_state(db, source_id)
         observed_unchanged = []
         upsert_started = time.monotonic()
         for index, raw in enumerate(rows):
             if index and index % 100 == 0:
-                observe_unchanged(db, observed_unchanged)
+                observe_unchanged(db, observed_unchanged, source_id)
                 source.lease_expires_at = utcnow() + timedelta(
                     minutes=settings.source_lease_minutes
                 )
@@ -201,9 +175,9 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
                     raise ValueError("Duplicate posting ID in source snapshot")
                 seen.add(data.source_job_id)
                 existing = existing_jobs.get(data.source_job_id)
-                unchanged = posting_unchanged(existing, data)
-                if unchanged:
-                    observed_unchanged.append(existing.id)
+                if unchanged(db, existing, data):
+                    if existing.ingestion_fingerprint:
+                        observed_unchanged.append(existing.source_job_id)
                     result.unchanged += 1
                     continue
                 _, created = upsert_with_retry(db, source_id, data)
@@ -221,7 +195,7 @@ def sync_source(db: Session, collector: Collector) -> SyncResult:
                         "error_type": type(exc).__name__,
                     },
                 )
-        observe_unchanged(db, observed_unchanged)
+        observe_unchanged(db, observed_unchanged, source_id)
         result.upsert_duration_ms = int((time.monotonic() - upsert_started) * 1000)
         if result.failures or not collector.snapshot_complete:
             result.status = "partial"

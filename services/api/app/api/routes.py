@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 
 from services.api.app.db.session import get_db
 from services.api.app.models.job import IngestionRun, Job, JobSource
@@ -31,7 +31,13 @@ def jobs(db: Database, filters: Annotated[JobFilters, Query()]):
 
 @router.get("/jobs/{job_id}", response_model=JobDetail)
 def job_detail(job_id: UUID, db: Database):
-    job = db.get(Job, job_id)
+    job = db.get(
+        Job,
+        job_id,
+        options=[
+            load_only(*(getattr(Job, name) for name in JobDetail.model_fields), raiseload=True)
+        ],
+    )
     if job is None:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
@@ -51,7 +57,15 @@ def companies(db: Database):
 @router.get("/sources", response_model=list[SourceOut])
 def sources(db: Database, limit: int = Query(500, ge=1, le=1000), offset: int = Query(0, ge=0)):
     return db.scalars(
-        select(JobSource).order_by(JobSource.name, JobSource.id).offset(offset).limit(limit)
+        select(JobSource)
+        .options(
+            load_only(
+                *(getattr(JobSource, name) for name in SourceOut.model_fields), raiseload=True
+            )
+        )
+        .order_by(JobSource.name, JobSource.id)
+        .offset(offset)
+        .limit(limit)
     ).all()
 
 

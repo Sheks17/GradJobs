@@ -27,6 +27,11 @@ The API serves requests; ingestion runs in GitHub Actions, outside Vercel reques
 
 See [design decisions](docs/design-decisions.md), [MVP completion and measured scale](docs/mvp-completion.md), and [deployment operations](docs/deployment.md). Current database counts and source health are exposed at `/api/stats`, `/api/stats/providers`, `/api/sources`, and the read-only `/admin/ingestion` page.
 
+Read [Neon egress optimization](docs/egress-optimization.md) for explicit API
+projections, compact unchanged-sync state, public detail caching outside the
+database, and measured local payload reductions. Production quota recovery remains
+an account-level dependency; already consumed transfer cannot be undone by a release.
+
 ## What is included
 
 ### Fully supported providers

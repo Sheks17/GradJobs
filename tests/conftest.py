@@ -10,6 +10,11 @@ from services.api.app.db.session import Base
 from services.api.app.models.job import JobSource
 
 
+@pytest.fixture(autouse=True)
+def isolated_public_cache(tmp_path, monkeypatch):
+    monkeypatch.setenv("COLLECTOR_CACHE_DIR", str(tmp_path / "public-cache"))
+
+
 @pytest.fixture
 def db():
     url = os.environ.get("TEST_DATABASE_URL")

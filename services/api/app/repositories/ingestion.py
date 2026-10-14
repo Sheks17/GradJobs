@@ -2,7 +2,7 @@ import uuid
 from datetime import UTC
 
 from sqlalchemy import delete, or_, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 
 from collectors.normalizers.location import remote_restrictions
 from collectors.normalizers.text import (
@@ -21,6 +21,15 @@ from shared.schemas import NormalizedJob
 def duplicate_candidate(db: Session, fields: dict, job_id: uuid.UUID) -> Job | None:
     candidates = db.scalars(
         select(Job)
+        .options(
+            load_only(
+                Job.id,
+                Job.normalized_location,
+                Job.normalized_apply_url,
+                Job.source,
+                raiseload=True,
+            )
+        )
         .where(
             Job.id != job_id,
             Job.duplicate_of.is_(None),
@@ -56,11 +65,18 @@ def duplicate_candidate(db: Session, fields: dict, job_id: uuid.UUID) -> Job | N
 
 def upsert_job(db: Session, source_id: uuid.UUID, data: NormalizedJob) -> tuple[Job, bool]:
     job = db.scalar(
-        select(Job).where(Job.source_id == source_id, Job.source_job_id == data.source_job_id)
+        select(Job)
+        .options(load_only(Job.id, Job.posted_at, Job.closing_at, Job.closed_at, raiseload=True))
+        .where(Job.source_id == source_id, Job.source_job_id == data.source_job_id)
     )
     created = job is None
     job_id = job.id if job else uuid.uuid4()
     fields = data.model_dump()
+    from collectors.ingestion_state import content_fingerprint
+
+    fields["ingestion_fingerprint"] = content_fingerprint(
+        data, job.posted_at if job else None, job.closing_at if job else None
+    )
     fields.update(
         company_slug=normalize_company(data.company_name).replace(" ", "-"),
         normalized_title=normalize_title(data.title),

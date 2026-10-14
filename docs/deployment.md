@@ -42,6 +42,14 @@ The Workday cache is controlled by `WORKDAY_DETAIL_CACHE_HOURS=6`; source review
 
 ## Build and deploy
 
+Neon network optimization adds migration `c53e0a2026` and compact source-content
+fingerprints. Run the additive migration before ingestion when database access is
+restored. API list/detail projections remain compatible with the preceding schema.
+Workday details are cached in ignored `artifacts/collector-cache` files via GitHub
+Actions restore/save, not reloaded from database raw JSON. `COLLECTOR_CACHE_DIR`
+optionally selects another local directory. Cache files contain public postings
+only; no credentials or personal review records. See [measured egress estimates](egress-optimization.md).
+
 From `apps/web`, run `npm ci`, `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test`, and `npm run build`. From the root, run `python -m ruff check .`, `python -m ruff format --check .`, and `python -m pytest -q`. Python 3.12 is selected for the API runtime. `requirements.txt` contains runtime dependency versions matching the tested development lock.
 
 Deploy from the root with `npx vercel --prod`. The npm lockfile includes Linux optional dependency peers and was validated in Vercel's Linux build. Public production access is verified independently of authenticated CLI access.

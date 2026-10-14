@@ -65,6 +65,14 @@ Failure count means consecutive failed/partial runs and resets after a full succ
 
 All adapters throttle requests, use timeouts and retry transport failures/429/5xx up to four total attempts. Raw provider JSON is retained; Workday wrappers additionally record the detail-check timestamp for cache expiry. Structured locations support country/state filtering across multiple locations. Remote alone does not establish U.S. eligibility; cities do not establish onsite work. Text parsing is conservative and incomplete, so some eligible U.S. jobs will be missed when only ambiguous city names appear.
 
+Unchanged jobs are identified by a canonical normalized-content hash and matching
+version, using compact source-state queries. Missing legacy hashes initialize by
+comparing incoming fields inside the database; no job bodies are returned and
+unchanged posting update timestamps are preserved. Observations batch by source
+and posting ID. Lifecycle reconciliation excludes seen IDs in SQL. Workday's
+six-hour cache is a disposable gzip file restored by Actions, not a full raw-data
+query against Neon. See [network measurements and rollout](egress-optimization.md).
+
 Each provider posting upserts on `(source_id, source_job_id)`. Normalized company/title plus matching application identity, or cross-provider identical substantial description and location, groups clear duplicates. Distinct same-board requisitions are retained. Unchanged normalized postings with the current matching version refresh observation timestamps/missing counters without rewriting scores, skills or update times. Changed postings follow the existing matching/upsert pipeline. First discovery never moves on repeat syncs. Employer publication is preserved if a later response omits it.
 
 ## Administrative API

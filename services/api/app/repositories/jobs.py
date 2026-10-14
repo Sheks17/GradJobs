@@ -2,13 +2,13 @@ from datetime import timedelta
 from math import ceil
 
 from sqlalchemy import case, exists, func, or_, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, load_only
 
 from collectors.normalizers.location import normalize_state
 from matching.scoring import SENIOR_LEVELS
 from services.api.app.db.session import utcnow
 from services.api.app.models.job import Job, JobLocation, JobSkill, JobSource
-from services.api.app.schemas.jobs import JobFilters, JobPage, Stats
+from services.api.app.schemas.jobs import JobFilters, JobPage, JobSummary, Stats
 
 
 def visible_conditions(country: str = "US") -> list:
@@ -171,6 +171,9 @@ def list_jobs(db: Session, filters: JobFilters) -> JobPage:
     total = db.scalar(select(func.count()).select_from(Job).where(*conditions)) or 0
     items = db.scalars(
         select(Job)
+        .options(
+            load_only(*(getattr(Job, name) for name in JobSummary.model_fields), raiseload=True)
+        )
         .where(*conditions)
         .order_by(*order, Job.id)
         .offset((filters.page - 1) * filters.page_size)

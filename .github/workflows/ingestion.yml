@@ -29,10 +29,23 @@ jobs:
       - run: pip install -r requirements-dev.lock && pip install --no-deps -e .
       - name: Require configured database
         run: python -m collectors.production_check
+      - name: Restore public Workday detail cache
+        uses: actions/cache/restore@v4
+        with:
+          path: artifacts/collector-cache
+          key: public-workday-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: public-workday-v1-${{ runner.os }}-
       - name: Migrate and register sources
         run: python -m alembic upgrade head && python -m collectors.seed_sources
       - name: Sync registered sources
+        id: ingestion
         run: python -m collectors.sync_all --output sync-summary.json
+      - name: Save public Workday details after completed or partial ingestion
+        if: always() && (steps.ingestion.outcome == 'success' || steps.ingestion.outcome == 'failure') && hashFiles('artifacts/collector-cache/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: artifacts/collector-cache
+          key: public-workday-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

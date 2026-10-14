@@ -2,6 +2,7 @@
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import load_only
 
 from collectors.ats_registry import ATS_REGISTRY
 from collectors.providers import PROVIDERS
@@ -10,7 +11,20 @@ from services.api.app.schemas.jobs import ensure_utc
 
 
 def provider_statistics(db):
-    sources = db.scalars(select(JobSource)).all()
+    sources = db.scalars(
+        select(JobSource).options(
+            load_only(
+                JobSource.id,
+                JobSource.name,
+                JobSource.source_type,
+                JobSource.company_name,
+                JobSource.enabled,
+                JobSource.last_successful_sync,
+                JobSource.last_error,
+                raiseload=True,
+            )
+        )
+    ).all()
     ranked = select(
         SourceSync.id,
         func.row_number()
@@ -21,7 +35,24 @@ def provider_statistics(db):
         .label("position"),
     ).subquery()
     latest = db.scalars(
-        select(SourceSync).join(ranked, SourceSync.id == ranked.c.id).where(ranked.c.position == 1)
+        select(SourceSync)
+        .options(
+            load_only(
+                SourceSync.id,
+                SourceSync.source_id,
+                SourceSync.jobs_fetched,
+                SourceSync.jobs_created,
+                SourceSync.jobs_updated,
+                SourceSync.request_count,
+                SourceSync.request_latency_ms,
+                SourceSync.failed_requests,
+                SourceSync.rate_limit_responses,
+                SourceSync.upsert_duration_ms,
+                raiseload=True,
+            )
+        )
+        .join(ranked, SourceSync.id == ranked.c.id)
+        .where(ranked.c.position == 1)
     ).all()
     histories = {row.source_id: row for row in latest}
     active = dict(

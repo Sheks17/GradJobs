@@ -37,14 +37,29 @@ jobs:
         run: python -m collectors.production_check && python -m alembic upgrade head
       - name: Register verified sources
         run: python -m collectors.seed_sources
+      - name: Restore public Workday detail cache
+        uses: actions/cache/restore@v4
+        if: inputs.provider != 'none'
+        with:
+          path: artifacts/collector-cache
+          key: public-workday-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: public-workday-v1-${{ runner.os }}-
       - name: Audit production database
         run: python -m collectors.audit_production --output database-audit.json
       - name: Recover provider
+        id: recovery
         if: inputs.provider != 'none' && inputs.provider != 'failed'
         run: python -m collectors.sync_all --provider "$RECOVERY_PROVIDER" --output recovery-summary.json
       - name: Retry completed failed sources
+        id: retry
         if: inputs.provider == 'failed'
         run: python -m collectors.recover_failed
+      - name: Save public Workday details after recovery
+        if: always() && (steps.recovery.outcome == 'success' || steps.recovery.outcome == 'failure' || steps.retry.outcome == 'success' || steps.retry.outcome == 'failure') && hashFiles('artifacts/collector-cache/**') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: artifacts/collector-cache
+          key: public-workday-v1-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
