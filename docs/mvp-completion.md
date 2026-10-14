@@ -7,7 +7,10 @@ Today Neon rejects connections because the account/project quota is exceeded.
 verify the new cloud import and production smoke checks. No new development phase
 is required. See [final ATS expansion](final-ats-expansion.md) for 102 verified
 employers, nine collectors and current validation. The detailed 12 October
-measurements below remain historical observations, not current counts.
+measurements below remain historical observations, not current counts. Final
+expansion CI passed 338 backend, 13 frontend and nine browser tests. New-provider
+isolated imports created 133 postings across 15 verified employer sources;
+production writes and current active counts remain blocked by the database quota.
 
 ## Production and scale
 

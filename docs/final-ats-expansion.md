@@ -104,12 +104,26 @@ fabricated by adding fetched rows to historical active totals.
 
 ## Validation and limitations
 
-Backend tests: **337 passed, 12 skipped**, with three existing warnings. The
+Final PostgreSQL CI backend tests: **338 passed, 12 skipped**, with three existing warnings. The
 separate existing-provider network regression passed **12 live checks** across
 Greenhouse, Lever, Ashby, SmartRecruiters, USAJOBS and Workday. New-provider live
-verification covers 15 complete boards and repeat ingestion. Frontend, browser,
-PostgreSQL CI, lint/types/build and final deployment results are recorded after
-the release checks finish.
+verification covers 15 complete boards and repeat ingestion. **13 frontend tests
+and nine browser tests passed**. Ruff/formatting, ESLint/Prettier, TypeScript,
+production frontend builds and PostgreSQL Alembic upgrade/check passed. No new
+migration was needed. [Final CI evidence](https://github.com/Sheks17/GradJobs/actions/runs/38646373489).
+
+The bounded credential audit found no findings in **210 publication files, 282
+Git-history text objects and 27 built JavaScript bundles**. Local secrets and
+review datasets remain ignored. Public production API health returned **503**
+on 14 October; Neon quota rejection prevents current counts and new cloud writes.
+The provider registry intentionally reports unavailable counts during that outage.
+
+Vercel release `dpl_CHhRVBXftrHc5r8UjuKxrdGuR9re` reached READY on 14 October.
+The public `/admin/providers` page loaded all 23 registry entries (22 ATS plus
+USAJOBS), displayed supported/detection-only access accurately and withheld
+operational counts during the quota outage. This verifies release serving and
+outage behavior, not job-search availability. Production database-dependent
+search, details, health and new provider ingestion still require restored access.
 
 Supported career-host families do not guarantee every custom domain or protected
 board. Unknown dates/locations/salaries stay unknown; unstructured salary text is
