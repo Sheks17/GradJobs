@@ -93,7 +93,17 @@ syncs, server-side legacy initialization, preserved update/posting timestamps,
 raw-content change detection, JSON key-order stability, cache corruption handling
 and existing API/lifecycle behavior. PostgreSQL CI checks JSONB comparisons and
 the additive migration; SQLite remains the local fallback. Final test counts and
-deployment status are recorded after release verification.
+deployment status: [CI run 38651701692](https://github.com/Sheks17/GradJobs/actions/runs/38651701692)
+passed **346 backend tests, 13 frontend tests and nine browser tests**, plus
+PostgreSQL upgrade/check, lint, formatting, TypeScript and production builds.
+Twelve optional live tests remain skipped in the offline suite; three existing
+warnings remain. The egress changes do not alter provider endpoint contracts.
+
+Vercel release `dpl_HQKueEVDkoSeLD7u1gW6wJ9g5f4E` reached READY on 14 October.
+Public `/api/stats/ats` returned 200 with all 23 registry entries and withheld
+database counts; `/api/health` still returned 503 because Neon remains quota-locked.
+Production migration, fingerprint initialization, Actions-cache persistence and
+actual Neon billing reduction cannot be claimed until access is restored.
 
 Before production ingestion, run the additive Alembic migration after quota access
 is restored. The first Workday cache is cold and may fetch employer details;

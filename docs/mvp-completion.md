@@ -11,6 +11,11 @@ measurements below remain historical observations, not current counts. Final
 expansion CI passed 338 backend, 13 frontend and nine browser tests. New-provider
 isolated imports created 133 postings across 15 verified employer sources;
 production writes and current active counts remain blocked by the database quota.
+The subsequent [egress optimization](egress-optimization.md) removes full-row
+unchanged-sync/lifecycle reads and unused API payload columns. Its release passed
+346 backend, 13 frontend and nine browser tests. Local measured row-payload
+estimates fell 99.69% for core unchanged-sync reads; actual production billing
+verification and migration `c53e0a2026` remain dependent on restored Neon access.
 
 ## Production and scale
 
