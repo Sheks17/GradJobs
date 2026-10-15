@@ -6,6 +6,11 @@
 
 GradJobs is a live job discovery and tracking application for U.S. students, graduates, and early-career technology candidates. It collects supported public employer job boards, preserves source data, groups clear duplicates, and explains a rule-based early-career score. It does not claim complete coverage of the job market.
 
+New to the codebase? Start with the [developer onboarding guide](docs/onboarding/README.md)
+for the repository map, frontend/backend/schema references, end-to-end job and
+search walkthroughs, local setup, testing, deployment and debugging. Its
+[first-week guide](docs/onboarding/first-week-guide.md) gives a practical reading order.
+
 ## Problem and architecture
 
 Early-career candidates face fragmented employer sites and junior-sounding postings that require substantial experience. GradJobs brings real postings into a consistent, searchable model and surfaces the requirements behind each score. Applications always go to the original employer site.
