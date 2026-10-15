@@ -1,23 +1,27 @@
 # GradJobs MVP completion report
 
-Updated 14 October 2026. The timer blocker was cleared by three successful
-automatic scheduled runs on 13 October. The latest refreshed all 84 sources.
-Today Neon rejects connections because the account/project quota is exceeded.
-**GradJobs MVP is not currently operationally complete:** restore Neon access and
-verify the new cloud import and production smoke checks. No new development phase
-is required. See [final ATS expansion](final-ats-expansion.md) for 102 verified
-employers, nine collectors and current validation. The detailed 12 October
-measurements below remain historical observations, not current counts. Final
-expansion CI passed 338 backend, 13 frontend and nine browser tests. New-provider
-isolated imports created 133 postings across 15 verified employer sources;
-production writes and current active counts remain blocked by the database quota.
-The subsequent [egress optimization](egress-optimization.md) removes full-row
-unchanged-sync/lifecycle reads and unused API payload columns. Its release passed
-346 backend, 13 frontend and nine browser tests. Local measured row-payload
-estimates fell 99.69% for core unchanged-sync reads; actual production billing
-verification and migration `c53e0a2026` remain dependent on restored Neon access.
+Updated 14 October evening America/Chicago (15 October 00:19 UTC).
+**GradJobs MVP is complete.** The owner restored Neon access, production reached
+additive Alembic revision `c53e0a2026`, and cloud recovery succeeded for 99/99
+sources. Public browser, search, details and health checks passed. No required
+development phase remains. See [production restoration](production-restoration.md)
+for final counters, cache reuse and live smoke evidence.
 
-## Production and scale
+The current aggregate is **17,355 active canonical jobs across all countries**,
+including **9,662 U.S. jobs**, from 98 enabled employers plus one federal source.
+Coverage is **102 verified employers**, including four disabled Workday candidates.
+All nine collectors have production postings; the 15 new employers contributed
+133 postings. The detailed 12 October measurements below remain historical.
+
+The [egress optimization](egress-optimization.md) removes full-row unchanged-sync
+and lifecycle reads and unused API payload columns. Its release passed 346 backend,
+13 frontend and nine browser tests, PostgreSQL migration checks and builds. Local
+estimated core unchanged-sync reads fell 99.69%; actual Neon billable savings remain
+unmeasured. The 3.81 MB public Workday cache was saved in Actions and restored by
+the next automatic scheduled run. Matching remains frozen and holdout labels
+remain pending.
+
+## Historical production and scale: 12 October
 
 - [Repository](https://github.com/Sheks17/GradJobs)
 - [Application](https://gradjobs-drab.vercel.app)
@@ -202,14 +206,17 @@ not extra required phases.
 Optional: human holdout review, broader verified employer coverage, additional
 metadata adapters, cross-device accounts and email alerts.
 
-## Concrete completion blocker
+## Operational completion
 
 Automatic event delivery was verified in scheduled run **38439471093**, completed
 13 October at **17:56:49 UTC**, with 84/84 successful sources and persisted writes.
-Today restore database access in Vercel → Storage → connected Neon project →
-Usage/Billing, then verify cloud ingestion and production API/job search. No
-credentials should be pasted into chat or committed. New-provider production
-counts cannot be reported until database access and cloud ingestion succeed.
+After owner quota recovery, [run 38655466612](https://github.com/Sheks17/GradJobs/actions/runs/38655466612)
+completed successfully at **00:17:06 UTC on 15 October**: 99/99 sources,
+16,792 fetched, 664 created, 3,565 updated and 12,539 unchanged. No source or job
+failures occurred. Production migration, cloud writes, public browser/API checks
+and Actions cache persistence passed. The next automatic scheduled event started
+and restored the cache; its final result was pending at this report's cutoff.
+No production reset, matching change, secret exposure or automated billing action
+was needed. See the restoration report for measured counts and timing limitations.
 
-**GradJobs MVP is not yet complete.** Production is blocked by Neon quota;
-automatic scheduled ingestion has been verified.
+**GradJobs MVP is complete.** No concrete MVP blocking items remain.

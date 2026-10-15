@@ -1,8 +1,11 @@
 # Neon egress optimization
 
 14 October 2026. The account owner measured 0.32 GB storage, 1.57 CU-hours and
-5.58 GB outbound transfer since 12 October. Production connections are currently
-quota-blocked. No production data was downloaded, deleted or reset for this work.
+5.58 GB outbound transfer since 12 October. Production connections were initially
+quota-blocked. The owner subsequently restored access; see the
+[production restoration report](production-restoration.md) for live migration and
+serving evidence. The optimization measurements used a read-only local snapshot;
+production was not reset or deleted.
 
 ## Diagnosis
 
@@ -87,6 +90,13 @@ database access returns. Query projection cannot refund already consumed egress
 or remove an existing quota lock.
 
 ## Verification and rollout
+
+**Restoration update:** production reached `c53e0a2026` and the full cloud run
+succeeded for 99/99 sources. The 3.81 MB public Workday cache was saved outside
+Neon and restored by the next automatic scheduled run. See
+[production restoration](production-restoration.md) for counters and live smoke
+results. Actual billable savings remain unmeasured. The quota-blocked deployment
+observations below describe the original release before owner recovery.
 
 Tests assert SQL SELECT projections, no description/raw-data reads on unchanged
 syncs, server-side legacy initialization, preserved update/posting timestamps,

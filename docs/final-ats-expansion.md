@@ -3,6 +3,11 @@
 Measured 14 October 2026. The matching engine and existing 150-posting holdout
 remain unchanged. No new required development phase is proposed.
 
+**Restoration update:** the account owner subsequently restored Neon access on
+14 October. Production migration and serving checks passed; see the
+[production restoration report](production-restoration.md) for recovery ingestion
+and current counts. Quota-blocked observations below describe the initial release.
+
 ## Coverage and access
 
 All 22 requested ATS platforms were researched and classified in the

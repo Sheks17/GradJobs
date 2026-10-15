@@ -29,8 +29,10 @@ See [design decisions](docs/design-decisions.md), [MVP completion and measured s
 
 Read [Neon egress optimization](docs/egress-optimization.md) for explicit API
 projections, compact unchanged-sync state, public detail caching outside the
-database, and measured local payload reductions. Production quota recovery remains
-an account-level dependency; already consumed transfer cannot be undone by a release.
+database, and measured local payload reductions. The account owner restored Neon
+access on 14 October; see [production restoration](docs/production-restoration.md)
+for migration, ingestion and serving evidence. Already consumed transfer cannot
+be undone by a release, and actual billable savings still require Neon counters.
 
 ## What is included
 
@@ -39,7 +41,8 @@ an account-level dependency; already consumed transfer cannot be undone by a rel
 Greenhouse, Lever, Ashby, SmartRecruiters, Workday, Workable, Recruitee and BreezyHR
 retrieve published employer postings. USAJOBS is an additional supported federal
 provider using registered API credentials. The three new adapters passed live
-verification and repeat imports; production population depends on database access.
+verification and repeat imports; all now have production postings. The restored
+99-source cloud sync succeeded; see the restoration report for measured counts.
 
 ### Detected only
 
